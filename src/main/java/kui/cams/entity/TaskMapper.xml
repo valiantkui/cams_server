@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<!-- namespace映射文件的namespace必须等于Mapper映射器的全限定名 -->
+<mapper namespace="kui.cams.dao.TaskDao">
+	
+	
+	<select id="findCurrentTermTask" resultType="kui.cams.entity.Task" parameterType="String">
+		select * from task
+		where c_no = #{c_no}
+		and publish_date >= #{start_date} and publish_date  &lt;= #{end_date}
+	</select>
+	<insert id="publishTask" parameterType="kui.cams.entity.Task">
+		insert into task(subject,content,publish_date,update_date,end_date,c_no,s_id)
+		 values(#{subject},#{content},#{publish_date},#{update_date},#{end_date},#{c_no},#{s_id})
+	
+	</insert>
+
+	<update id="updateTask" parameterType="kui.cams.entity.Task" >
+		update task set subject = #{subject}, content = #{content}, update_date=#{update_date}, end_date=#{end_date}
+		
+		 where t_no = #{t_no}
+	</update>
+	
+	
+	
+</mapper>
+
+
+
+
+
+
+

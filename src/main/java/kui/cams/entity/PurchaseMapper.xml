@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<!-- namespace映射文件的namespace必须等于Mapper映射器的全限定名 -->
+<mapper namespace="kui.cams.dao.PurchaseDao">
+	<!-- purchase(p_no, title, content, type, publish_date, end_date, c_no, s_id)
+			goods(g_no, name, price, participator_path, p_no) 
+	-->
+	<insert id="publishPurchase" parameterType="kui.cams.entity.Purchase" useGeneratedKeys="true" keyProperty="p_no">
+		insert into purchase(title, content, type, publish_date,end_date,c_no, s_id) 
+		values(#{title},#{content},#{type},#{publish_date},#{end_date},#{c_no},#{s_id})
+	</insert>
+	
+	
+	
+	<select id="findPurchaseByC_no" resultType="kui.cams.entity.Purchase" parameterType="String">
+		select * from purchase 
+		where c_no = #{c_no} 
+		order by p_no desc
+	</select>
+	
+	<select id="findInPurchaseByC_no" resultType="kui.cams.entity.Purchase" parameterType="String">
+		select * from purchase 
+		where c_no = #{c_no}  
+		and end_date > now() 
+		order by publish_date desc
+	</select>
+	
+	<select id="findPurchaseByP_no" resultType="kui.cams.entity.Purchase" parameterType="int">
+		select * from purchase 
+		where p_no = #{p_no}
+	</select>
+
+	<select id="findPurchaseByS_id" resultType="kui.cams.entity.Purchase" parameterType="String"> 
+	
+		select * from purchase 
+		where s_id = #{s_id}
+	</select>
+	
+	
+	
+	
+</mapper>
+
+
+
+
+
+
+

@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<!-- namespace映射文件的namespace必须等于Mapper映射器的全限定名 -->
+<mapper namespace="kui.cams.dao.GoodsDao">
+	<!-- purchase(p_no, title, content, type, publish_date, end_date, c_no, s_id)
+			goods(g_no, name, price, participator_path, p_no) 
+	-->
+	<select id="findGoodsByP_no" parameterType="int" resultType="kui.cams.entity.Goods">
+		select * from goods 
+		where p_no = #{p_no}
+	</select>
+
+	<insert id="addGoods" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="g_no">
+		insert into goods(name,price,p_no) 
+		values
+		 <foreach collection="list" index="index" item="goods" separator="," close=";">  
+          (#{goods.name},#{goods.price},#{goods.p_no})
+        </foreach>
+		
+	
+	</insert>
+	
+	<update id="updatePath" parameterType="java.util.List" >
+		 <foreach collection="list" index="index" item="goods" separator=";" close=";" >  
+          	update goods set participator_path = #{goods.participator_path} 
+          	where g_no = #{goods.g_no}
+        </foreach>
+	</update>
+	
+	
+	
+	
+</mapper>
+
+
+
+
+
+
+

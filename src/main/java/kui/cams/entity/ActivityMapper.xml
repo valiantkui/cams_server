@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<!-- namespace映射文件的namespace必须等于Mapper映射器的全限定名 -->
+<mapper namespace="kui.cams.dao.ActivityDao">
+
+	<select id="searchActivityByTitle" resultType="kui.cams.entity.Activity">
+		select * from activity 
+		where c_no = #{c_no} 
+		 and title like concat("%",concat(#{title},"%"))
+	</select>
+
+
+	<select id="searchActivityByDate" resultType="kui.cams.entity.Activity">
+		select * from activity 
+		where c_no = #{c_no} 
+		 and publish_date like concat(#{date},"%")
+	</select>
+	
+	<delete id="deleteActivityByA_no" parameterType="int">
+		delete from activity 
+		where a_no = #{a_no}
+	</delete>
+	<select id="findActivityByA_no" parameterType="int" resultType="kui.cams.entity.Activity">
+		select * from activity 
+		where a_no = #{a_no}
+	
+	</select>
+	
+	<update id="updatePathByA_no" >
+		update activity set participator_path=#{participator_path} 
+		 where a_no = #{a_no}
+	</update>
+	
+	<update id="updateActivity" parameterType="kui.cams.entity.Activity" >
+		update activity set title=#{title}, content=#{content}, start_date=#{start_date}, end_date=#{end_date}
+		where a_no = #{a_no}
+	
+	</update>
+	<insert id="addActivity" parameterType="kui.cams.entity.Activity" useGeneratedKeys="true" keyProperty="a_no">
+		insert into activity(title,content,publish_date,update_date,start_date,end_date,c_no,s_id)
+		 values(#{title},#{content},#{publish_date},#{update_date},#{start_date},#{end_date},#{c_no},#{s_id})
+	</insert>
+	
+	<select id="findActivityByMonthC_no" parameterType="String" resultType="kui.cams.entity.Activity" >
+		select * from activity 
+		where c_no = #{c_no} 
+		 and publish_date like concat(#{month},"%")
+	</select>
+	
+	<select id="findActivityByMonthS_id" parameterType="String" resultType="kui.cams.entity.Activity" >
+		select * from activity 
+		where s_id = #{s_id} 
+		 and publish_date like concat(#{month},'%')
+	</select>
+	
+		<select id="findActivityByDayC_no" parameterType="String" resultType="kui.cams.entity.Activity" >
+		select * from activity 
+		where c_no = #{c_no} 
+		 and publish_date like concat(#{day},'%')
+	</select>
+	
+	<select id="findActivityByDayS_id" parameterType="String" resultType="kui.cams.entity.Activity" >
+		select * from activity 
+		where s_id = #{s_id} 
+		 and publish_date like concat(#{day},'%')
+	</select>
+	
+	
+	
+</mapper>
+
+
+
+
+
+
+

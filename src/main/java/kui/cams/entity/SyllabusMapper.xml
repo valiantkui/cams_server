@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<!-- namespace映射文件的namespace必须等于Mapper映射器的全限定名 -->
+<mapper namespace="kui.cams.dao.SyllabusDao">
+
+
+	<delete id="deleteSyllabusByS_no" parameterType="int">
+		delete from syllabus 
+		where s_no = #{s_no}
+	</delete>
+
+	<select id="findSyllabusByTermC_no" parameterType="kui.cams.entity.Syllabus" resultType="kui.cams.entity.Syllabus">
+		select * from syllabus 
+		where c_no = #{c_no} 
+		and term = #{term}
+	</select>
+	
+	<select id="findSyllabusByS_no" parameterType="int" resultType="kui.cams.entity.Syllabus">
+		select * from syllabus 
+		where s_no = #{s_no}
+	</select>
+	<insert id="addSyllabus" parameterType="kui.cams.entity.Syllabus" useGeneratedKeys="true" keyProperty="s_no">
+		insert into syllabus(name,term,all_subject,image_path,c_no)
+		values(#{name},#{term},#{all_subject},#{image_path},#{c_no})
+	</insert>
+	
+	<update id="updateSyllabus" parameterType="kui.cams.entity.Syllabus" >
+		update syllabus set name = #{name},  term = #{term}, all_subject = #{all_subject}, image_path = #{image_path}
+		
+		where s_no = #{s_no}
+	</update>
+	
+	
+	
+</mapper>
+
+
+
+
+
+
+

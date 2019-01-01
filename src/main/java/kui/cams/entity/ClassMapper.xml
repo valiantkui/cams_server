@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<!-- namespace映射文件的namespace必须等于Mapper映射器的全限定名 -->
+<mapper namespace="kui.cams.dao.ClassDao">
+	<insert id="classRegister" parameterType="kui.cams.entity.Class">
+		insert into class(c_no,password,name,school,image_path,profession,enrol_date,tell) 
+		values(#{c_no},#{password},#{name},#{school},#{image_path},#{profession},#{enrol_date},#{tell})
+	</insert>
+	
+	<select id="findClassByC_no" resultType="kui.cams.entity.Class" parameterType="String">
+		select * from class where c_no=#{c_no}
+	</select>
+	
+	<select id="findStudentByC_no" resultType="kui.cams.entity.Student" parameterType="String">
+		select * from student 
+		where c_no = #{c_no}
+	</select>
+	
+
+	
+	
+	
+</mapper>
+
+
+
+
+
+
+

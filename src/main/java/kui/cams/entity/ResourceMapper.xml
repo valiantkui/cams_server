@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<!-- namespace映射文件的namespace必须等于Mapper映射器的全限定名 -->
+<mapper namespace="kui.cams.dao.ResourceDao">
+	<!-- resource(r_no, type, subject, path, md5, count)  -->
+	<!-- r_c_s(r_no, c_no, r_name, s_id)  -->
+	
+	<select id="findResourceByMd5" resultType="kui.cams.entity.Resource" parameterType="String">
+		select * from resource 
+		where md5 = #{md5}
+	</select>
+	
+	<insert id="addResource"  useGeneratedKeys="true" keyProperty="r_no">
+		insert into resource(type,subject,path,md5,count)
+		values(#{type},#{subject},#{path},#{md5}#{count})
+	
+	</insert>
+	
+	<update id="updateCount" parameterType="int">
+		update resource set count=count+1 
+		where r_no = #{r_no}
+	</update>
+
+	
+	
+	
+</mapper>
+
+
+
+
+
+
+

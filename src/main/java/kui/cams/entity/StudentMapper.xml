@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<!-- namespace映射文件的namespace必须等于Mapper映射器的全限定名 -->
+<mapper namespace="kui.cams.dao.StudentDao">
+	<select id="findStudentByS_idList" parameterType="java.util.List" resultType="kui.cams.entity.Student">
+		select * from student 
+		where s_id in 
+		  <foreach collection="list" index="index" item="item" open="(" separator="," close=")">  
+            #{item}  
+        </foreach>
+	</select>
+	
+	<select id="findStudentByC_no" resultType="kui.cams.entity.Student" parameterType="String">
+		select * from student 
+		where c_no = #{c_no}
+	</select>
+	
+	<insert id="addStudent" parameterType="kui.cams.entity.Student">
+		insert into student(s_id,password,name,post,c_no) 
+		values(#{s_id},#{password},#{name},#{post},#{c_no})
+	</insert>
+	
+	<delete id="deleteStudentByS_id">
+		delete from student 
+		where s_id=#{s_id}
+	</delete>
+	
+	<select id="findStudentByS_id" parameterType="String" resultType="kui.cams.entity.Student">
+		select * from student 
+		where s_id = #{s_id}
+	</select>
+	
+	<update id="updateStudentByClass" parameterType="kui.cams.entity.Student">
+		update student set  name = #{name}, post = #{post}
+		where s_id = #{s_id}
+	</update>
+	
+	<update id="updateStudentByStudent" parameterType="kui.cams.entity.Student">
+		update student set password = #{password} , name = #{name}, image_path = #{image_path}
+		where s_id = #{s_id}
+	</update>
+	
+	
+	
+	
+</mapper>
+
+
+
+
+
+
+
