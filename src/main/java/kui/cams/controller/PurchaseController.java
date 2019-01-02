@@ -1,9 +1,11 @@
 package kui.cams.controller;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -80,6 +82,11 @@ public class PurchaseController {
 		return purchaseDao.findPurchaseByP_no(p_no);
 	}
 	
+	/**
+	 * 获取指定团购编号的所有团购商品信息的集合
+	 * @param pNoStr	团购编号
+	 * @return
+	 */
 	@RequestMapping("/findGoodsInfoByP_no")
 	@ResponseBody
 	public List<GoodsInfo> findGoodsInfoByP_no(@RequestParam("p_no") String pNoStr){
@@ -214,7 +221,80 @@ public class PurchaseController {
 		return "true";
 	}
 	
+	@RequestMapping("/joinPurchaseGoods")
+	@ResponseBody
+	public String joinPurchaseGoods(@RequestParam("g_no") String gNoStr,@RequestParam("number") String numStr,@RequestParam("p_no") String pNoStr,HttpSession session) {
+		int g_no = Integer.parseInt(gNoStr);
+		int number = Integer.parseInt(numStr);
+		int p_no = Integer.parseInt(pNoStr);//暂时用不到
+		
+		String path = goodsDao.findGoodsByG_no(g_no).getParticipator_path();
+		String s_id = (String) session.getAttribute("s_id");
+		
+		String content = s_id+" "+number+"\r\n";
+		FileWriter fw = null;
+		try {
+			fw = new FileWriter(new File(Global.goodsPath+path),true);
+			fw.write(content);
+			fw.flush();
+			
+		} catch (IOException e) {
+			return "false";
+			
+		} finally {
+			try {
+				if(fw != null) fw.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} 
+		
+		
+		
+		
+		return "true";
+	}
 	
-	
-	
+	@RequestMapping("/unjoinPurchaseGoods")
+	@ResponseBody
+	public String unjoinPurchaseGoods(@RequestParam("g_no") String gNoStr,HttpSession session) {
+		int g_no = Integer.parseInt(gNoStr);
+		String s_id = (String) session.getAttribute("s_id");
+		
+		String path = goodsDao.findGoodsByG_no(g_no).getParticipator_path();
+		BufferedReader br = null;
+		BufferedWriter bw = null;
+		try {
+			br = new BufferedReader(new FileReader(Global.goodsPath+path));
+			List<String> list = new ArrayList<>();
+			String line = null;
+			while((line = br.readLine()) != null) {
+				if(line.startsWith(s_id)) continue;
+				list.add(line);
+			}
+			
+			bw = new BufferedWriter(new FileWriter(Global.goodsPath+path));
+			for(String s: list) {
+				bw.write(s+"\r\n");
+			}
+			bw.flush();
+		} catch (FileNotFoundException e) {
+		
+			return "false";
+		} catch (IOException e) {
+			
+			return "false";
+		} finally {
+			try {
+				if(br!=null) br.close();
+				if(bw!=null) bw.close();
+			}catch (Exception e) {
+				
+			}
+		}
+		
+		
+		return "true";
+	}
 }

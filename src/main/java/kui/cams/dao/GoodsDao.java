@@ -10,6 +10,8 @@ import kui.cams.entity.Goods;
 public interface GoodsDao {
 	public List<Goods> findGoodsByP_no(int p_no);
 	
+	public Goods findGoodsByG_no(int g_no);
+	
 	public int deleteGoodsByP_no(int p_no);
 	
 	public int addGoods(List<Goods> list);

@@ -35,7 +35,8 @@
 	<select id="findPurchaseByS_id" resultType="kui.cams.entity.Purchase" parameterType="String"> 
 	
 		select * from purchase 
-		where s_id = #{s_id}
+		where s_id = #{s_id} 
+		order by p_no desc
 	</select>
 	
 	
