@@ -156,10 +156,15 @@ public class PurchaseController {
 	public String deletePurchaseByP_no(@RequestParam("p_no") String pNoStr) {
 		
 		int p_no = Integer.parseInt(pNoStr);
+		List<Goods> goodsList = goodsDao.findGoodsByP_no(p_no);
+		boolean isOk = false;
+		if(purchaseDao.deletePurchaseByP_no(p_no)>0 && goodsDao.deleteGoodsByP_no(p_no)>0) isOk=true;
+		for(Goods g: goodsList) {
+			File file = new File(Global.goodsPath+g.getParticipator_path());
+			if(file.exists()) file.delete();
+		}
+		return String.valueOf(isOk);
 		
-		if(purchaseDao.deletePurchaseByP_no(p_no)>0 && goodsDao.deleteGoodsByP_no(p_no)>0) return "true";
-		
-		return "false";
 	}
 	
 	@RequestMapping("/publishPurchase")
