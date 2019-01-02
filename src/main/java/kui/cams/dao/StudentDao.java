@@ -2,6 +2,7 @@ package kui.cams.dao;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import kui.cams.entity.Student;
@@ -18,6 +19,8 @@ public interface StudentDao {
 	public void addStudent(Student student);
 	
 	public void updateStudentByStudent(Student student);
+	
+	public void updateStudentPassword(@Param("s_id") String s_id,@Param("password") String password);
 	
 	public int updateStudentByClass(Student student);
 	

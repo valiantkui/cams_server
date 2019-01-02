@@ -38,11 +38,14 @@
 	</update>
 	
 	<update id="updateStudentByStudent" parameterType="kui.cams.entity.Student">
-		update student set password = #{password} , name = #{name}, image_path = #{image_path}
+		update student set name = #{name}, image_path = #{image_path}
 		where s_id = #{s_id}
 	</update>
 	
-	
+	<update id="updateStudentPassword" >
+		update student set password = #{password}
+		where s_id = #{s_id}
+	</update>
 	
 	
 </mapper>
