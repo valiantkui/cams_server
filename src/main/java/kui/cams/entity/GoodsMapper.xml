@@ -17,6 +17,10 @@
 		where g_no = #{g_no}
 	</select>
 
+	<delete id="deleteGoodsByP_no" parameterType="int">
+		delete from goods 
+		where p_no = #{p_no}
+	</delete>
 	<insert id="addGoods" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="g_no">
 		insert into goods(name,price,p_no) 
 		values

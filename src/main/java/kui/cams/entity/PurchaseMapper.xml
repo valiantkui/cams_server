@@ -12,6 +12,10 @@
 		values(#{title},#{content},#{type},#{publish_date},#{end_date},#{c_no},#{s_id})
 	</insert>
 	
+	<delete id="deletePurchaseByP_no" parameterType="int">
+		delete from purchase 
+		where p_no = #{p_no}
+	</delete>
 	
 	
 	<select id="findPurchaseByC_no" resultType="kui.cams.entity.Purchase" parameterType="String">
