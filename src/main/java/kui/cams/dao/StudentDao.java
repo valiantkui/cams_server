@@ -20,6 +20,8 @@ public interface StudentDao {
 	
 	public void updateStudentByStudent(Student student);
 	
+	public void updateStudentWithNoImage(Student student);
+	
 	public void updateStudentPassword(@Param("s_id") String s_id,@Param("password") String password);
 	
 	public int updateStudentByClass(Student student);

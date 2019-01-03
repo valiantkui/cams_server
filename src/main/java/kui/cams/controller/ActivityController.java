@@ -157,6 +157,15 @@ public class ActivityController {
 		
 		return activityDao.findActivityByMonthC_no(c_no, month);
 	}
+	@RequestMapping("/findActivityByS_id")
+	public List<Activity> findActivityByS_id(HttpSession session){
+		String s_id = (String) session.getAttribute("s_id");
+		List<Activity> activityList = activityDao.findActivityByS_id(s_id);
+		if(activityList.size()==0) return null;
+		
+		return activityList;
+		
+	}
 	
 	@RequestMapping("/findActivityByDate")
 	public List<Activity> findActivityByDate(String date,HttpSession session){
@@ -327,6 +336,15 @@ public class ActivityController {
 		}
 		
 		return activityDao.searchActivityByTitle(title, c_no);
+	}
+	
+	
+	@RequestMapping("/searchStudentActivityByTitle")
+	public List<Activity> searchStudentActivityByTitle(String title,HttpSession session){
+		String s_id = (String)session.getAttribute("s_id");
+	
+		
+		return activityDao.searchStudentActivityByTitle(title, s_id);
 	}
 	@RequestMapping("/searchActivityByDate")
 	public List<Activity> searchActivityByDate(String date,HttpSession session){

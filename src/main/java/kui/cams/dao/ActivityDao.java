@@ -17,7 +17,7 @@ public interface ActivityDao {
 	 * @return
 	 */
 	public List<Activity> searchActivityByTitle(@Param("title") String title,@Param("c_no") String c_no);
-	
+	public List<Activity> searchStudentActivityByTitle(@Param("title") String title,@Param("s_id") String s_id);
 	public List<Activity> searchActivityByDate(@Param("date") String date,@Param("c_no") String c_no);
 	public Activity findActivityByA_no(int a_no) ;
 	
@@ -31,7 +31,7 @@ public interface ActivityDao {
 
 	public void updatePathByA_no(@Param("a_no") int a_no,@Param("participator_path") String participator_path);
 	
-	
+	public List<Activity> findActivityByS_id(String s_id);
 	/**
 	 * 获取指定班级的指定月份的所有活动信息
 	 * @param c_no
@@ -39,6 +39,8 @@ public interface ActivityDao {
 	 * @return
 	 */
 	public List<Activity> findActivityByMonthC_no(@Param("c_no") String c_no,@Param("month") String month);
+	
+	
 	
 	/**
 	 * 获取某班级指定日期的所有活动

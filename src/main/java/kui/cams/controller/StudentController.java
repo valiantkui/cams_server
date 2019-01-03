@@ -1,10 +1,13 @@
 package kui.cams.controller;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
@@ -35,7 +38,7 @@ public class StudentController {
 		
 		
 		
-		List<String> s_idList = new Gson().fromJson(s_idJson, new TypeToken<List<String>>() {}.getType());
+		List<String> s_idList = new Gson().fromJson(s_idJson, new TypeToken<List<String>>(){}.getType());
 		System.out.println("s_idList:"+s_idList);
 		if(s_idList==null || s_idList.size()==0) return null;
 		return studentDao.findStudentByS_idList(s_idList);
@@ -70,6 +73,24 @@ public class StudentController {
 		return "true";
 	}
 	
+	@RequestMapping("/updateStudentWithNoImage")
+	@ResponseBody
+	public String updateStudentWithNoImage(String name,HttpSession session) {
+		String s_id = (String) session.getAttribute("s_id");
+		
+		Student student = new Student();
+		student.setS_id(s_id);
+		student.setName(name);
+		try {
+			
+			studentDao.updateStudentWithNoImage(student);
+		}catch (Exception e) {
+			return "false";
+		}
+		
+		return "true";
+	}
+	
 	@RequestMapping("/updateStudentPassword")
 	@ResponseBody
 	public String updateStudentPassword(String password,HttpSession session) {
@@ -84,5 +105,40 @@ public class StudentController {
 		
 		
 		return "true";
+	}
+	
+	@RequestMapping("/downloadStudentImage")
+	public void downloadStudentImage(String s_id,HttpServletResponse response) {
+		String image_path = studentDao.findStudentByS_id(s_id).getImage_path();
+		
+		response.setContentType("image/png");
+		FileInputStream fis = null;
+		try {
+			OutputStream os = response.getOutputStream();
+			
+			fis = new FileInputStream(Global.studentImagePath+image_path);
+			byte[] bytes = new byte[1024*10];
+			int i = -1;
+			while((i=fis.read(bytes))!=-1) {
+				os.write(bytes, 0, i);
+			}
+			
+			os.flush();
+			
+			
+		} catch (IOException e) {
+			e.printStackTrace();	
+		} finally {
+			try {
+				if (fis != null)
+					fis.close();
+			} catch (Exception e2) {
+				// TODO: handle exception
+			}
+		}
+		
+		
+		
+		
 	}
 }

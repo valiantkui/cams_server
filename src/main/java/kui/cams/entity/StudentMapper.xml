@@ -42,6 +42,11 @@
 		where s_id = #{s_id}
 	</update>
 	
+	<update id="updateStudentWithNoImage" parameterType="kui.cams.entity.Student">
+		update student set name = #{name}
+		where s_id = #{s_id}
+	</update>
+	
 	<update id="updateStudentPassword" >
 		update student set password = #{password}
 		where s_id = #{s_id}

@@ -160,6 +160,11 @@ public class ClassController {
 		all_subject = all_subject.substring(0,all_subject.length()-1);
 		String image_path = null;
 		String c_no = (String)(request.getSession().getAttribute("c_no"));
+		String s_id = (String)(request.getSession().getAttribute("s_id"));
+		if(c_no == null && s_id != null) {
+			c_no = studentDao.findStudentByS_id(s_id).getC_no();
+		}
+		
 		System.out.println("c_no:"+c_no);
 		String sufix = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
 		image_path = c_no+"_"+term+sufix;
@@ -237,6 +242,10 @@ public class ClassController {
 	@ResponseBody
 	public Syllabus findSyllabusByTerm(@RequestParam("term") String termStr,HttpSession session) {
 		String c_no =(String) session.getAttribute("c_no");
+		String s_id = (String) session.getAttribute("s_id");
+		if(c_no==null && s_id != null) {
+			c_no = studentDao.findStudentByS_id(s_id).getC_no();
+		}
 		int term = Integer.parseInt(termStr);
 		Syllabus syllabus = new Syllabus();
 		syllabus.setC_no(c_no);

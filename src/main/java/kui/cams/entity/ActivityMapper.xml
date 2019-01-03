@@ -10,7 +10,11 @@
 		where c_no = #{c_no} 
 		 and title like concat("%",concat(#{title},"%"))
 	</select>
-
+<select id="searchStudentActivityByTitle" resultType="kui.cams.entity.Activity">
+		select * from activity 
+		where s_id = #{s_id} 
+		 and title like concat("%",concat(#{title},"%"))
+	</select>
 
 	<select id="searchActivityByDate" resultType="kui.cams.entity.Activity">
 		select * from activity 
@@ -25,6 +29,12 @@
 	<select id="findActivityByA_no" parameterType="int" resultType="kui.cams.entity.Activity">
 		select * from activity 
 		where a_no = #{a_no}
+	
+	</select>
+	
+	<select id="findActivityByS_id" parameterType="String" resultType="kui.cams.entity.Activity">
+	select * from activity 
+		where s_id = #{s_id}
 	
 	</select>
 	
