@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>课程表管理</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+   <link rel="icon" href="../img/logo2.png" >
+  
+  <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/css/bootstrap.min.css">
+  <!--<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>-->
+    <script
+            src="https://code.jquery.com/jquery-1.12.4.js"
+            integrity="sha256-Qw82+bXyGq6MydymqBxNPYTaUXXq7c8v3CwiYwLLNXU="
+            crossorigin="anonymous"></script>
+  <script src="https://cdn.staticfile.org/popper.js/1.12.5/umd/popper.min.js"></script>
+  <script src="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/js/bootstrap.min.js"></script>
+  	 	<script type="text/javascript" src="../js/global_varable.js"></script>
+
+
+		<style>
+		.position{
+			float:right;
+		}
+	</style>
+	<script>
+
+        $.ajaxSetup({
+            xhrFields: {
+                //允许带上凭据
+                withCredentials: true
+            },
+            crossDomain: true,
+        });
+
+        var $current;
+		$(function(){//当整个页面加载完之后执行此方法
+			$current=$("#current");
+            findSyllabusByTerm(1);
+		});
+
+		function findSyllabusByTerm(term){
+
+		    $.ajax({
+               url: domain+"/class/findSyllabusByTerm?term="+term,
+                type: "get",
+                dataType: "text",
+                success: function (result) {
+                   if(result==""){
+                     //  alert("没有当前学期的课程表："+term);
+                       $("#syllabus_name").text("无");
+                       $("#syllabus_image")[0].src="../img/syllabus_inload.png";
+                       $("#delete_syllabus").unbind("click");
+                   }else{
+
+                    var syllabus = $.parseJSON(result);
+                    $("#syllabus_name").text(syllabus.name);
+                    $("#syllabus_image")[0].src=domain+"/class/downloadSyllabusImageByS_no?s_no="+syllabus.s_no;
+                    $("#delete_syllabus").unbind("click");
+                    $("#delete_syllabus").click({"s_no":syllabus.s_no},deleteSyllabus);
+                   }
+
+                },
+                error: function(e){
+                   alert("错误！！");
+                }
+
+            });
+        }
+
+        function deleteSyllabus(e){
+           // alert();
+            var s_no = e.data.s_no;
+            $.ajax({
+               url: domain+"/class/deleteSyllabusByS_no?s_no="+s_no,
+                type: "get",
+                dataType: "text",
+                success: function (result) {
+                    //alert(result);
+                    $("#syllabus_name").text("无");
+                    $("#syllabus_image")[0].src="../img/syllabus_inload.png";
+                    $("#delete_syllabus").unbind("click");
+
+                },
+                error: function (e) {
+                    alert("错误");
+                }
+            });
+        }
+
+		function loadContent(t){
+			//alert(t.innerHTML)
+			var flag = t.innerText;
+			$current.parent().removeClass("active");
+			$current=$(t);
+			//alert($current.parent());
+			$current.parent().addClass("active");
+		}
+
+
+		function addSubject(){
+		    var last_input = $("#subject_group>input:last");
+		    if(last_input.val().trim() == "") return;
+
+		    last_input[0].readOnly="true";
+            $("#subject_group").append('<input type="text" class="form-control" name="subject" placeholder="学科">');
+
+        }
+
+
+        function doSubmit(){
+            if($("#name").val().trim() == "" || $("#term").val().trim() == "" || $("#file").val().trim() == ""){
+                $("#message").text("请输入完整");
+                $("#message").css({color:"red"});
+                return ;
+            }
+            alert("提交之前")
+            var formdata = new FormData(document.getElementById("form"));
+            alert("提交之后")
+            $.ajax({
+                url: domain+"/class/addSyllabus",
+                type: "post",
+                data:formdata,
+                dataType:"text",
+                processData: false,
+                contentType: false,
+                success:function(result){
+                    if(result=="true"){
+                        alert("提交成功");
+                    }else{
+                        alert("异常");
+                    }
+                    //alert(result)
+                },
+                error:function(e){
+                    alert("错误！！");
+                }
+            });
+            return true;
+
+
+        }
+	</script>
+	
+	
+	</head>
+	<body>
+		<!--导航栏-->
+			<div id="header">
+				<script>
+					$("#header").load("header.html");
+				</script>
+                <script src="../js/checkClassSession.js"></script>
+			</div>
+
+		<div class="container-fluid" >
+
+                <h2 class="h2_body">课程表展示</h2><br/><br/>
+
+                <div class="row">
+
+                    <div class="col-12 col-md-4">
+                        <form id="form">
+                              <div class="form-group">
+                                  <!--name=课程表&term=2&subject=[]-->
+                                <label for="name">课表名</label>
+                                <input type="text" class="form-control" id="name" name="name" placeholder="syllabus_name">
+                              </div>
+                              <div class="form-group">
+                                <label for="term">学期选择</label>
+                                <select class="form-control" id="term" name="term" >
+                                    <option>1</option>
+                                    <option>2</option>
+                                    <option>3</option>
+                                    <option>4</option>
+                                    <option>5</option>
+                                    <option>6</option>
+                                    <option>7</option>
+                                    <option>8</option>
+                                  </select>
+                              </div>
+                                  <div class="form-group" id="subject_group">
+                                    <label for="exampleInputPassword1">请添加本学期所有学科</label><button type="button" class="btn btn-success" onclick="addSubject()">添加学科</button>
+                                    <input type="text" class="form-control" name="subject" placeholder="学科">
+                                  </div>
+                              <div class="form-group">
+                                <label for="exampleInputPassword1">图片文件添加</label>
+                                <input type="file" class="form-control" id="file" name="file" placeholder="Photos">
+                              </div>
+
+                              <button type="button" onclick="doSubmit()" class="btn btn-success">提交</button>
+                                <span id="message">
+
+                                </span>
+                        </form>
+                    </div>
+                    <div class="col-12 col-md-8" style="text-align: left">
+
+
+                              <div id="syllabus" style="text-align: center">
+                                  <h4 id="syllabus_name">课程表名</h4>
+                                    <img id="syllabus_image" src="../img/syllabus_inload.png" width="100%"><!--从网上抓取-->
+                              </div>
+                              
+                              
+                       
+                              	
+                              
+                              <div class="row btn-group" >
+                              	<div class="col-3 col-md">
+                              		<button class="btn btn-default" type="button" onclick="findSyllabusByTerm(1)">1</button>
+                              	</div>
+                              	<div class="col-3 col-md">
+                              		<button class="btn btn-default" type="button" onclick="findSyllabusByTerm(2)">2</button>
+                              	</div>
+                              	<div class="col-3 col-md">
+                              		<button class="btn btn-default" type="button" onclick="findSyllabusByTerm(3)">3</button>
+                              	</div>
+                              	<div class="col-3 col-md">
+                              		<button class="btn btn-default" type="button" onclick="findSyllabusByTerm(4)">4</button>
+                              	</div>
+                              	<div class="col-3 col-md">
+                              		<button class="btn btn-default" type="button" onclick="findSyllabusByTerm(5)">5</button>
+                              	</div>
+                              	<div class="col-3 col-md">
+                              		<button class="btn btn-default" type="button" onclick="findSyllabusByTerm(6)">6</button>
+                              	</div>
+                              	<div class="col-3 col-md">
+                              		<button class="btn btn-default" type="button" onclick="findSyllabusByTerm(7)">7</button>
+                              	</div>
+                              	<div class="col-3 col-md">
+                              		<button class="btn btn-default" type="button" onclick="findSyllabusByTerm(8)">8</button>
+                              	</div>
+                              	
+                              	
+                              </div>
+                             
+
+                            <button class="btn btn-danger btn-md" id="delete_syllabus">删除</button>
+                    </div>
+                </div>
+        </div>
+   </div>
+    
+		<div id="footer">
+			<script>$("#footer").load("footer.html")</script>
+		</div>
+
+	</body>
+</html>

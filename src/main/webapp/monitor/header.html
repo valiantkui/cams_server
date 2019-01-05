@@ -1,0 +1,131 @@
+
+
+<script>
+
+    UrlParam = function() { // url参数
+        var data, index;
+        (function init() {
+            data = []; //值，如[["1","2"],["zhangsan"],["lisi"]]
+            index = {}; //键:索引，如{a:0,b:1,c:2}
+            var u = window.location.search.substr(1);
+            if (u != '') {
+                var params = decodeURIComponent(u).split('&');
+                for (var i = 0, len = params.length; i < len; i++) {
+                    if (params[i] != '') {
+                        var p = params[i].split("=");
+                        if (p.length == 1 || (p.length == 2 && p[1] == '')) {// p | p= | =
+                            data.push(['']);
+                            index[p[0]] = data.length - 1;
+                        } else if (typeof(p[0]) == 'undefined' || p[0] == '') { // =c 舍弃
+                            continue;
+                        } else if (typeof(index[p[0]]) == 'undefined') { // c=aaa
+                            data.push([p[1]]);
+                            index[p[0]] = data.length - 1;
+                        } else {// c=aaa
+                            data[index[p[0]]].push(p[1]);
+                        }
+                    }
+                }
+            }
+        })();
+        return {
+            // 获得参数,类似request.getParameter()
+            param : function(o) { // o: 参数名或者参数次序
+                try {
+                    return (typeof(o) == 'number' ? data[o][0] : data[index[o]][0]);
+                } catch (e) {
+                }
+            },
+            //获得参数组, 类似request.getParameterValues()
+            paramValues : function(o) { // o: 参数名或者参数次序
+                try {
+                    return (typeof(o) == 'number' ? data[o] : data[index[o]]);
+                } catch (e) {}
+            },
+            //是否含有paramName参数
+            hasParam : function(paramName) {
+                return typeof(paramName) == 'string' ? typeof(index[paramName]) != 'undefined' : false;
+            },
+            // 获得参数Map ,类似request.getParameterMap()
+            paramMap : function() {
+                var map = {};
+                try {
+                    for (var p in index) { map[p] = data[index[p]]; }
+                } catch (e) {}
+                return map;
+            }
+        }
+    }();
+
+
+        var flag = UrlParam.param("flag");
+        $("#navbarNav>ul>li").removeClass("active");
+        $($("#navbarNav>ul>li")[flag-1]).addClass("active");
+        //alert(flag);
+</script>
+<meta charset="UTF-8">
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="1s_data.html"><h4>班级管理</h4></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item active" id="current">
+                <a class="nav-link" href="1s_data.html?flag=1">学生资料管理</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="2syllabus.html?flag=2">课程表管理</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="3activity.html?flag=3">活动管理</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link " href="4purchase.html?flag=4">团购管理</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link " href="5c_data.html?flag=5" >班级资料管理</a>
+            </li>
+            <li class="nav-item ">
+                <a class="nav-link " href="6c_courseware.html?flag=6">班级课件管理</a>
+            </li>
+            <li class="nav-item ">
+                <a class="nav-link " href="7task.html?flag=7">作业管理</a>
+            </li>
+            <li class="nav-item ">
+                <a class="nav-link " href="javascript:SignOut()">退出登陆</a>
+            </li>
+
+        </ul>
+    </div>
+	    <div class="position d-none" >
+	        <span id="classInfo"></span>
+	        <button type="button" class="btn btn-default btn-md"  id="sign_out" onclick="SignOut()">退出登陆</button>
+	    </div>
+    <!--登录 按钮-->
+
+
+</nav>
+<script>
+    function SignOut(){
+        $.ajax({
+            url: domain+"/login/classLogout",
+            type: "get",
+            dataType: "text",
+            success: function (result) {
+                if(result == "true"){
+                    window.location="SignInUp.html";
+                }else{
+                    alert("退出失败");
+                }
+            },
+            error: function(e){
+                alert("网络异常");
+            }
+
+
+
+        })
+    }
+
+</script>

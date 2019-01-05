@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>爱心班级-团体活动</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+   <link rel="icon" href="img/logo2.png" >
+   <link rel="stylesheet" type="text/css" href="css/3Group.css">
+  <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/css/bootstrap.min.css">
+  <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://cdn.staticfile.org/popper.js/1.12.5/umd/popper.min.js"></script>
+  <script src="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="./js/global_varable.js"></script>
+  	<style>
+		.position{
+			float:right;
+		}
+
+        .margin_top{
+            margin-top: 2rem;
+        }
+        .unfoces{
+            height: 100%;
+            overflow: hidden;
+        }
+        @media (min-width: 1600px) {
+		  .container {
+		    max-width: 1500px;
+		  }
+		}
+	</style>
+    <script>
+        var currentArg = null;
+
+        var currentFunction = null;
+        $(function(){
+            var today = new Date();
+            var month = today.getMonth()+1;
+            if(month<10){
+                currentArg=today.getFullYear()+"-0"+(today.getMonth()+1);
+            }else{
+
+                currentArg = today.getFullYear()+"-"+(today.getMonth()+1);
+            }
+
+            findActivityByDate(currentArg);
+        });
+
+
+        function findActivityByDate(d){
+            // alert(d);
+            $.ajax({
+                url: domain+"/activity/findActivityByDate?date="+d,
+                type: "get",
+                dataType: "text",
+                success: function (result) {
+                    if(result == ""){
+                        $("#activity_panel").text("暂无活动");
+                    }else{
+                        var activityList = $.parseJSON(result);
+                        loadActivity(activityList);
+                    }
+
+                }
+
+            });
+            currentFunction = findActivityByDate;
+        }
+
+        function loadActivity(activityList){
+            $("#tbody").empty();
+            //alert(activityList.length);
+            var s_idArr = [];
+            for(var i = 0;i<activityList.length;i++){
+                var  activity = activityList[i];
+                if(activity.s_id != null && activity.s_id != ""){
+
+                s_idArr.push(activity.s_id);
+                }
+            }
+            //alert(s_idArr);
+            var s_idJson = JSON.stringify(s_idArr);
+            $.ajax({
+               url: domain+"/student/findStudentByS_idList",
+               type:"post",
+                dataType: "text",
+               data:  {"s_idJson":s_idJson},
+                success: function (result) {
+                   if(result != "" && result != null){
+
+                        var studentList = $.parseJSON(result);
+                        loadActivityStudent(activityList,studentList);
+                   }else{
+                       loadActivityStudent(activityList,null);
+                   }
+                },
+                error: function (e) {
+                    alert("网络请求异常")
+                }
+            });
+
+
+
+        }
+        function loadActivityStudent(activityList,studentList){
+            for(var i= 0;i<activityList.length;i++){
+
+
+                var activity = activityList[i];
+                var tr = document.createElement("tr");
+                var td1 = document.createElement("td");
+                var td2 = document.createElement("td");
+                var td3 = document.createElement("td");
+                var td4 = document.createElement("td");
+                var td5 = document.createElement("td");
+                var a = document.createElement("a");
+
+                if(studentList != null && activity.s_id != null && activity.s_id != ""){
+                    var student = null;
+                    for(var j= 0;j<studentList.length;j++){
+                        if(studentList[j].s_id==activity.s_id){
+                            student = studentList[j];
+                            break;
+                        }
+                    }
+
+                    $(td4).text(student.name);
+                }else{
+
+
+
+
+                    $(td4).text("班级用户");
+
+                }
+
+                $(a).text(activity.title);
+                a.href="activity_info.html?a_no="+activity.a_no+"&flag=3";
+
+                $(a).css({"font-size": "20px"});
+                $(td1).append(a);
+                $(td2).append(activity.content);
+                $(td3).append(activity.start_date.split(" ")[0]+"-"+activity.end_date.split(" ")[0]);
+                $(td5).append('<button class="btn btn-danger" onclick="activityInfo('+activity.a_no+')" type="button">详情</button>');
+                $(tr).append(td1,td2,td3,td4,td5);
+
+                $("#tbody").append(tr);
+
+            }
+        }
+        function activityInfo(a_no){
+            var maxw = document.documentElement.clientWidth;
+            var maxh = document.documentElement.clientHeight;
+            //alert(maxw+",,"+maxh);
+            $("#activity_info_panel").css({"position":"fixed",width:maxw+"px",height:maxh+"px","top":"0px","left":"0px","overflow":"auto"});
+            $("#activity_info_panel")
+            $("#activity_info_panel").show();
+            $("html").addClass("unfoces");
+            $("body").addClass("unfoces");
+
+
+            $.ajax({
+                url: domain+"/activity/findActivityByA_no?a_no="+a_no,
+                type: "get",
+                dataType: "text",
+                success: function (result) {
+                    if(result == ""){
+
+                    }else{
+                        var activity = $.parseJSON(result);
+                        loadActivityInfo(activity);
+                    }
+                },
+                error: function (e) {
+                    alert("网络请求异常");
+                }
+
+            });
+            findParticipatorInfoByA_no(a_no);
+
+        }
+            
+            function removeFouces(){
+            	  $("html").removeClass("unfoces");
+                  $("body").removeClass("unfoces");
+            }
+
+
+
+        function findParticipatorInfoByA_no(a_no){
+            //alert("findParticipatorInfoByA_no:"+a_no);
+            $.ajax({
+                url: domain+"/activity/findParticipatorInfoByA_no?a_no="+a_no,
+                type: "get",
+                dataType: "text",
+                success: function (result) {
+                   // alert(result);
+                    if(result==""){
+                        loadParticipatorInfo([],a_no);
+                    }else{
+                        var studentList = $.parseJSON(result);
+                        loadParticipatorInfo(studentList,a_no);
+                    }
+                },
+                error: function (e) {
+                    alert("网络请求异常");
+                }
+
+            });
+        }
+
+        
+        
+        function cancelJoin(d){
+            var a_no = d;
+            //alert(a_no);
+            //return;
+            $.ajax({
+               url: domain+"/activity/cancelJoin?a_no="+a_no,
+                type: "get",
+                dataType: "text",
+                success: function (result) {
+                    //alert(result);
+                    if(result=="true"){
+                        findParticipatorInfoByA_no(a_no);
+                    }else{
+                        alert("取消失败");
+                    }
+                },
+                error: function (e) {
+                    alert("网络请求异常");
+                }
+            });
+        }
+        function joinActivity(a_no){
+           // alert(a_no);
+
+            $.ajax({
+               url: domain+"/activity/joinActivity?a_no="+a_no,
+               type: "get",
+               dataType: "text",
+               success: function (result) {
+                   if(result == "true"){
+                        findParticipatorInfoByA_no(a_no);
+                   }else{
+                       alert("参与失败，请重试");
+                   }
+
+               },
+                error: function (e) {
+                    alert("网络请求异常");
+                }
+
+            });
+
+
+        }
+        function loadActivityInfo(activity){
+            $("#info_title").text(activity.title);
+           // alert(activity.content);
+            $("#info_content").text(activity.content);
+            $("#info_start_date").text(activity.start_date.split(" ")[0]);
+            $("#info_end_date").text(activity.end_date.split(" ")[0]);
+        }
+
+
+        function loadParticipatorInfo(studentList,a_no){
+            //alert("loadParticipatorInfo:"+a_no);
+            var isJoined = false;
+            $("#info_student_list").empty();
+            for(var i = 0;i<studentList.length;i++){
+                var student = studentList[i];
+
+                if(student.s_id==studentInfo.s_id){
+                    isJoined=true;
+                }
+                var li = document.createElement("li");
+                $(li).text(student.name);
+
+                $("#info_student_list").append(li);
+            }
+            $("#info_student_list").nextAll("button").remove();
+            if(isJoined){
+               // alert("ddd")
+              /*  $("#joined").text("已参与");
+                $("#joined").removeAttr("onclick");
+*/
+                 $("#info_student_list").after("<button onclick='cancelJoin("+a_no+")' class='btn btn-light'>已参与</button>")
+              /*  $("#joined").removeClass();
+
+                $("#joined").addClass("btn btn-light");
+                $("#joined").click({"a_no":a_no},cancelJoin);*/
+
+
+            }else{
+
+                $("#info_student_list").after("<button onclick='joinActivity("+a_no+")'  class='btn btn-success'>参与</button>")
+            }
+        }
+
+        function doSubmit(){
+            var title = $("#title").val();
+            var content = $("#content").val();
+            var start_date = $("#start_date").val();
+            var end_date = $("#end_date").val();
+
+            if(title == "" || content=="" || start_date=="" || end_date==""){
+                $("#message").text("请输入完整");
+                $("#message").css({color: "red"});
+                return;
+            }
+
+            $.ajax({
+                url: domain+"/activity/publishActivity",
+                type: "post",
+                dataType: "text",
+                data: {"title":title,"content":content,"start_date":start_date,"end_date":end_date},
+                success: function (result) {
+                    if(result=="true"){
+                        alert("发布成功");
+                        $("#publish_activity_panel").fadeOut(500);
+                        currentFunction(currentArg);
+                    }else{
+                        $("#message").text("发布失败，请重试...");
+                        $("#message").css({color: "red"});
+                    }
+                },
+                error: function (e) {
+                    alert("错误");
+                }
+
+            });
+
+        }
+
+
+
+
+        function searchTitle(){
+            var title = $("#search_title").val();
+            if(title.trim()=="") return;
+
+            $.ajax({
+                url: domain+"/activity/searchActivityByTitle?title="+title,
+                type: "get",
+                dataType: "text",
+                success: function (result) {
+                    if(result == "") {
+
+                    }else{
+
+                        var activityList = $.parseJSON(result);
+                        loadActivity(activityList);
+                    }
+                },
+                error: function (e) {
+                    alert("网络请求异常");
+                }
+
+            });
+            currentFunction=searchTitle;
+        }
+        function searchDate(){
+            var date = $("#search_date").val();
+            if(date.trim()=="") return;
+
+            $.ajax({
+                url: domain+"/activity/searchActivityByDate?date="+date,
+                type: "get",
+                dataType: "text",
+                success: function (result) {
+                    if(result == "") {
+
+                    }else{
+
+                        var activityList = $.parseJSON(result);
+                        loadActivity(activityList);
+                    }
+                },
+                error: function (e) {
+                    alert("网络请求异常");
+                }
+
+            });
+            currentFunction=searchDate;
+        }
+
+
+        function publishActivity(){
+
+            var maxw = document.documentElement.clientWidth;
+            var maxh = document.documentElement.clientHeight;
+           // var maxh = maxh*0.9;
+            //alert(maxw+",,"+maxh);
+            $("#publish_activity_panel").css({"position":"fixed",width:maxw+"px",height:maxh+"px","top":"0px","left":"0px","overflow":"auto"});
+
+            $("#publish_activity_panel").show();
+            $("html").addClass("unfoces");
+            $("body").addClass("unfoces");
+        }
+    </script>
+</head>
+	<body>
+		<!--导航栏-->
+			<div id="header">
+				<script>
+					$("#header").load("header.html");
+				</script>
+                <script src="js/checkStudentSession.js"></script>
+			</div>
+<!--轮播图-->
+<div class="container">
+	<div id="movePhoto">
+        <script>$("#movePhoto").load("movePhoto3.html")</script>
+    </div>
+<!--文本内容-->
+            <div class="bg-white row margin_top">
+
+
+                <div class="col-12 col-md-4 margin_top">
+                    <h3>
+                        搜索
+                    </h3>
+                    <div class="container">
+                        <form class="navbar-form navbar-left row">
+
+                            <div class="form-group col-12 row" >
+                                <input type="text" class="form-control" id="search_title" placeholder="TitleSearch">
+                                <button type="button"  onclick="searchTitle()" class="btn btn-default" >标题搜索</button>
+                            </div>
+
+
+                            <div class="form-group col-12  row">
+                                <input type="date" class="form-control " id="search_date" placeholder="TimeSearch" >
+                                <button type="button"  onclick="searchDate()" class="btn btn-default " >日期搜索</button>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-8 margin_top">
+
+                    <h2 >本月活动展示</h2><br><br>
+
+
+
+                    <div class="row" id="activity_panel">
+
+
+                        <div class="container" >
+
+                            <button class="btn  btn-success float-right" onclick="publishActivity()">发布活动</button>
+                        </div>
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>活动公告</th>
+                                <th>活动内容</th>
+                                <th>活动时间</th>
+                                <th>发布者</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody id="tbody">
+                            <!--
+                              <tr>
+
+                                <td><a href="#" style="font-size: 20px;">郑州大学暑假夏令营活动火热进行中</a></td>
+                                <td>
+
+                                    <button class="btn btn-danger" type="button">删除</button>
+                                </td>
+                              </tr>-->
+                            </tbody>
+                        </table>
+
+                        <div class="container">
+                            <ul class="pagination">
+                                <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+                                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+             <div class="bg-white " id="publish_activity_panel" style="position: fixed; display: none; padding: 4rem">
+                <h2>活动发布页面</h2><br><br>
+                <div >
+
+                    <form id="form">
+
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">标题</label>
+                            <input type="text" class="form-control" name="title" id="title" placeholder="题目">
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">文本内容</label>
+                            <textarea class="form-control" rows="3" name="content" id="content" placeholder="文本内容"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">开始时间</label>
+                            <input type="date" class="form-control" name="start_date" id="start_date" >
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">结束时间</label>
+                            <input type="date" class="form-control" name="end_date" id="end_date" >
+                        </div>
+
+
+                        <button type="button" onclick="doSubmit()" class="btn btn-success">Submit</button>
+                        <button type="button" onclick="$('#publish_activity_panel').fadeOut(500);removeFouces()" class="btn btn-success">取消发布</button>
+                        <span id="message"></span>
+                    </form>
+                </div>
+            </div>
+
+    <div class="bg-white " id="activity_info_panel" style="position: fixed; display: none; padding: 2rem">
+        <div class="container">
+            <button class="btn btn-success float-right" onclick="$('#activity_info_panel').fadeOut(500);removeFouces()">关闭</button>
+        </div>
+        <h2>活动详情页面</h2>
+        <div class="row" >
+            <div class="col-12 col-md-4">
+                <h3 id="info_title"></h3>
+                <p id="info_content">
+
+                </p>
+                <p class="text-muted">
+                    开始时间：
+                    <span id="info_start_date"></span><br/>
+                    -结束时间：
+                    <span id="info_end_date"></span>
+                </p>
+            </div>
+            <div class="col-12 col-md-4">
+                <h3>参与的同学</h3>
+                <ul id="info_student_list">
+
+                </ul>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+<!--底部内容-->
+<div id="footer">
+<script>$("#footer").load("footer.html")</script>
+</div>
+
+
+		
+	</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>爱心班级-首页</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+   <link rel="icon" href="img/logo2.png" >
+   <link rel="stylesheet" type="text/css" href="css/1Home.css">
+  <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/css/bootstrap.min.css">
+  <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://cdn.staticfile.org/popper.js/1.12.5/umd/popper.min.js"></script>
+  <script src="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="./js/global_varable.js"></script>
+  	<style>
+		.position{
+			float:right;
+		}
+	</style>
+
+	
+	<script>
+      	function signIn(){
+      		var a = document.getElementById("signIn");
+      		//var value = document.getElementById("canjia")
+      		
+      		
+      		
+      		if(a.innerText == "Sign in"){
+//    			a.setAttribute("class","btn btn-danger");
+      			a.innerText = "Signed in";
+      		}
+//    		else if(a.innerText == "取消"){
+//    			a.setAttribute("class","btn btn-success");
+//    			a.innerText = "参加";
+//    		}
+      	}
+      </script>
+	
+</head>
+	<body>
+		<!--导航栏-->
+			<div id="header">
+				<script>
+					$("#header").load("header.html");
+				</script>
+                <script src="js/checkStudentSession.js"></script>
+			</div>
+<!--轮播图-->
+<div class="container">
+	<div id="movePhoto">
+<script>$("#movePhoto").load("movePhoto1.html")</script>
+</div>
+<!--文本内容-->
+		<div class="container-fluid">
+
+    <h2 class="h2_body">班级起源</h2><br><br>
+    <p>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;郑州大学信息工程学院计算机科学与技术4班，成立于2015年9月，来自于全省的优秀
+      高考学子经过三年的努力齐聚郑大。从军训时，个个都是晒得黑白不匀称，到辩论比赛的斗志昂扬。从迎来第一场冬天的白雪皑皑到圣诞晚会，
+      大家欢乐共度。每个同学都非常团结，大家互帮互助。在学习上，同学们互相交流，互相分享经验，帮助班级整体保持很好地学习氛围。在课下，
+      愉快的篮球赛、诗歌大赛、朗诵比赛、长跑比赛等激发着每一个郑大学子的生机与活力。
+      <br><br></p>
+    <ol class="ol_li">
+      <li><a href="#">郑州大学信息工程学院计科4班成立大会</a></li>
+      <li><a href="#">班级班干部选拔投票最终名单公布</a></li>
+      <li><a href="#">“班级记忆”墙正式投入使用，记录班级变化</a></li>
+      <li><a href="#">班级成员的组成以及班级成员的基本信息</a></li>
+      <li><a href="#">班级成立的各项大事汇总表</a></li>
+
+    </ol>
+
+  </div>
+<!--底部内容-->
+<div id="footer">
+<script>$("#footer").load("footer.html")</script>
+</div>
+</div>
+		
+
+		
+	</body>
+</html>

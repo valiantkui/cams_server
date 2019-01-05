@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>作业管理-链接详情</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+   <link rel="icon" href="../img/logo2.png" >
+   <link rel="stylesheet" type="text/css" href="../css/1s_data.css">
+  <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/css/bootstrap.min.css">
+  <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://cdn.staticfile.org/popper.js/1.12.5/umd/popper.min.js"></script>
+  <script src="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/js/bootstrap.min.js"></script>
+  	 	<script type="text/javascript" src="../js/global_varable.js"></script>
+		<style>
+		.position{
+			float:right;
+		}
+	</style>
+	<script>
+		var $current;
+		$(function(){
+			$current=$("#current");
+		});
+		function loadContent(t){
+			//alert(t.innerHTML)
+			var flag = t.innerText;
+			$current.parent().removeClass("active");
+			$current=$(t);
+			//alert($current.parent());
+			$current.parent().addClass("active");
+			
+
+		}
+	</script>
+	
+	
+	</head>
+	<body>
+		<!--导航栏-->
+			<!--<div id="header">
+				<script>
+					$("#header").load("1header.html");
+				</script>
+			</div>-->
+	<div class="container">
+		<div class="position" >
+  	<button type="button" class="btn btn-default btn-md" data-toggle="modal" data-target="#myModalUp" onclick="window.location='7task.html'">Sign out</button>
+  </div>
+		
+		<div class="body_content" style="height: 600px;text-align: center;">
+
+    <h2 class="h2_body">微积分第三次作业内容</h2><br><br>
+    <p>发布者：XXX</p>
+    <p> 
+    	微积分第三次作业内容：书本第62页课后题1-14，书本82页复习总结2-13
+    	建议周一之前交到学习委员处。<br>
+    	微积分第三次作业内容：书本第62页课后题1-14，书本82页复习总结2-13
+    	建议周一之前交到学习委员处。<br>
+    	微积分第三次作业内容：书本第62页课后题1-14，书本82页复习总结2-13
+    	建议周一之前交到学习委员处。<br>
+    	微积分第三次作业内容：书本第62页课后题1-14，书本82页复习总结2-13
+    	建议周一之前交到学习委员处。<br>
+    	微积分第三次作业内容：书本第62页课后题1-14，书本82页复习总结2-13
+    	建议周一之前交到学习委员处。<br>
+    	微积分第三次作业内容：书本第62页课后题1-14，书本82页复习总结2-13
+    	建议周一之前交到学习委员处。<br>
+    	微积分第三次作业内容：书本第62页课后题1-14，书本82页复习总结2-13
+    	建议周一之前交到学习委员处。<br>
+    	微积分第三次作业内容：书本第62页课后题1-14，书本82页复习总结2-13
+    	建议周一之前交到学习委员处。<br>
+    	微积分第三次作业内容：书本第62页课后题1-14，书本82页复习总结2-13
+    	建议周一之前交到学习委员处。<br>
+    	微积分第三次作业内容：书本第62页课后题1-14，书本82页复习总结2-13
+    	建议周一之前交到学习委员处。<br>
+	
+    </p>
+    
+    
+    
+
+   
+   </div>
+    
+		<div id="footer">
+			<script>$("#footer").load("footer.html")</script>
+		</div>
+
+</div>
+	</body>
+</html>

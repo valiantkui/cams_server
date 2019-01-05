@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>课件管理</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+   <link rel="icon" href="../img/logo2.png" >
+   <link rel="stylesheet" type="text/css" href="../css/1s_data.css">
+  <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/css/bootstrap.min.css">
+  <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://cdn.staticfile.org/popper.js/1.12.5/umd/popper.min.js"></script>
+  <script src="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/js/bootstrap.min.js"></script>
+  	 	<script type="text/javascript" src="../js/global_varable.js"></script>
+		<style>
+		.position{
+			float:right;
+		}
+	</style>
+	<script>
+		var $current;
+		$(function(){
+			$current=$("#current");
+		});
+		function loadContent(t){
+			//alert(t.innerHTML)
+			var flag = t.innerText;
+			$current.parent().removeClass("active");
+			$current=$(t);
+			//alert($current.parent());
+			$current.parent().addClass("active");
+			
+
+		}
+	</script>
+	<script>
+		function group_Goods(){
+			
+			var last_input_good=$("#group_goods>input:last").val();
+			var last_input_price = $("#group_price>input:last").val();
+			if(last_input_good.trim() != "" && last_input_price.trim() != ""){
+				
+			/*	var create_input = document.createElement("input");
+				$(create_input).addClass("form-control");//添加类属性*/
+//				create_input.class="form-control";
+//				create_input.id="exampleInputEmail1";
+//				create_input.style="align:left";
+				$("#addGoods").before("<input type='text' class='form-control' />");//button上一个元素添加
+				$("#group_price").append("<input type='number' class='form-control' />");
+				
+			}
+			
+			
+			
+		}
+	</script>
+	
+	</head>
+	<body>
+		<!--导航栏-->
+			<div id="header">
+				<script>
+					$("#header").load("header.html");
+				</script>
+			</div>
+
+
+<div class="container-fluid">
+    <div  class="col-12 col-md-4">
+
+  <h2 class="h2_body" style="text-align: left;">课件发布页面</h2><br><br>
+
+
+    <form >
+      <div class="form-group">
+        <label for="exampleInputEmail1">文件名</label>
+        <input type="text" class="form-control" id="exampleInputEmail1" placeholder="重命名文件">
+      </div>
+      <div class="form-group">
+        <label for="exampleInputPassword1">所属学科选择</label>
+         <select class="form-control" id="sel1">
+            <option>微积分</option>
+            <option>线性代数</option>
+            <option>大学英语听说</option>
+            <option>大学英语读写</option>
+            <option>程序设计基础</option>
+            <option>计算机学科导论</option>
+            <option>大学体育</option>
+            <option>金工实习</option>
+          </select>
+      </div>
+      <div class="form-group">
+        <label for="exampleInputEmail1">添加课件</label>
+        <input type="file" class="form-control" id="exampleInputEmail1" placeholder="添加课件">
+      </div>
+      <button type="submit" class="btn btn-success">发布</button>
+    </form>
+  </div>
+    <div class="col-12 col-md-8">
+
+    </div>
+
+
+</div>
+
+        <div id="footer">
+            <script>$("#footer").load("footer.html")</script>
+        </div>
+	</body>
+</html>

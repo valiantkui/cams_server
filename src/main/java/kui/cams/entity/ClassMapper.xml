@@ -18,8 +18,19 @@
 		where c_no = #{c_no}
 	</select>
 	
-
+<update id="updateClass" parameterType="kui.cams.entity.Class">
+	update class set name=#{name}, school=#{school}, profession=#{profession} ,image_path = #{image_path}
+	where c_no = #{c_no}
+</update>
+<update id="updateClassWithNoImage" parameterType="kui.cams.entity.Class">
+	update class set name=#{name}, school=#{school}, profession=#{profession}  
+	where c_no = #{c_no}
+</update>
 	
+	<update id="updateClassPassword">
+		update class set password = #{password} 
+		where c_no = #{c_no}
+	</update>
 	
 	
 </mapper>

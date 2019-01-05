@@ -1,0 +1,393 @@
+
+  <meta charset="utf-8">
+
+
+<style>
+  .margin_top{
+    margin-top: 2rem;
+  }
+</style>
+
+  <script>
+    var $current;
+    var currentArg = null;
+
+    var currentFunction = null;
+    $(function(){
+      $current=$("#current");
+      var today = new Date();
+      var month = today.getMonth()+1;
+      if(month<10){
+        currentArg=today.getFullYear()+"-0"+(today.getMonth()+1);
+      }else{
+
+        currentArg = today.getFullYear()+"-"+(today.getMonth()+1);
+      }
+
+      findActivityByS_id(currentArg);
+    });
+    function loadContent(t){
+      //alert(t.innerHTML)
+      var flag = t.innerText;
+      $current.parent().removeClass("active");
+      $current=$(t);
+      //alert($current.parent());
+      $current.parent().addClass("active");
+
+
+    }
+
+    function findActivityByS_id(d){
+      // alert(d);
+      $.ajax({
+        url: domain+"/activity/findActivityByS_id",
+        type: "get",
+        dataType: "text",
+        success: function (result) {
+          if(result == ""){
+            $("#activity_panel").text("暂无活动");
+          }else{
+            var activityList = $.parseJSON(result);
+            findStudendByS_idList(activityList);
+          }
+
+        }
+
+      });
+      currentFunction = findActivityByS_id;
+    }
+
+    function findStudendByS_idList(activityList){
+      var s_idList= new Array();
+      for(var i = 0;i<activityList.length;i++){
+        var activity = activityList[i];
+        if(s_idList.indexOf(activity.s_id) == -1 && activity.s_id != null && activity.s_id != ""){
+          s_idList.push(activity.s_id);
+        }
+      }
+
+      var s_idJson = JSON.stringify(s_idList);
+      $.ajax({
+        url: domain+"/student/findStudentByS_idList",
+        type: "post",
+        dataType: "text",
+        data: {s_idJson:s_idJson},
+        success: function (result) {
+          //alert(result);
+          if(result != ""){
+            var studentList = $.parseJSON(result);
+            s_idList = new Array();
+           // alert("s_idList.length:"+s_idList.length);
+            for(var i = 0;i<studentList.length;i++){
+              s_idList.push(studentList[i].s_id);
+            }
+            loadActivity(activityList,studentList,s_idList);
+
+          }
+        },
+        error: function (e) {
+          alert("网络请求异常");
+        }
+      })
+
+    }
+    function loadActivity(activityList,studentList,s_idList){
+      $("#tbody").empty();
+      for(var i= 0;i<activityList.length;i++){
+        var activity = activityList[i];
+        var tr = document.createElement("tr");
+        var td1 = document.createElement("td");
+        var a = document.createElement("a");
+        $(a).text(activity.title);
+        a.href="activity_info.html?a_no="+activity.a_no+"&flag=3";
+        $(a).css({"font-size": "20px"});
+        var td2 = document.createElement("td");
+        var td3 = document.createElement("td");
+
+        var td4 = document.createElement("td");
+        var button1 = document.createElement("button");
+        $(button1).addClass("btn btn-danger");
+        $(button1).text("修改");
+        $(button1).click({"a_no":activity.a_no,"title":activity.title,"content":activity.content,"start_date":activity.start_date,"end_date":activity.end_date},updateActivity);
+        $(td3).text(activity.publish_date);
+        $(td4).append(button1);
+        $(td4).append('<button class="btn btn-danger" onclick="deleteActivity('+activity.a_no+')" type="button">删除</button>');
+        $(td1).append(a);
+        var index = s_idList.indexOf(activity.s_id);
+        //alert("index:"+index);
+        if(index == -1){
+          $(td2).text("班级用户");
+        }else{
+          $(td2).text(studentList[index].name);
+        }
+        $(tr).append(td1,td2,td3,td4);
+        $("#tbody").append(tr);
+      }
+    }
+
+    function updateActivity(d){
+      var a_no = d.data.a_no;
+      var title = d.data.title;
+      var content = d.data.content;
+      var start_date = d.data.start_date.split(" ")[0];
+      var end_date = d.data.end_date.split(" ")[0];
+
+      $("#update_activity_panel").show(500);
+      $("#a_no2").val(a_no);
+      $("#title2").val(title);
+      $("#content2").val(content);
+      $("#start_date2").val(start_date);
+      $("#end_date2").val(end_date);
+
+
+
+    }
+
+    function doUpdateActivity(){
+     // alert("test");
+      var a_no =   $("#a_no2").val();
+      var title =   $("#title2").val();
+      var content =  $("#content2").val();
+      var start_date =   $("#start_date2").val();
+      var end_date =  $("#end_date2").val();
+
+      if(a_no == "" || title=="" || content=="" || start_date=="" || end_date==""){
+        $("#update_activity_message").text("请输入完整");
+        $("#update_activity_message").css({"color":"red"});
+        return;
+      }
+
+
+      $.ajax({
+        url: domain+"/activity/updateActivity",
+        type:"post",
+        data: {"a_no":a_no,"title":title,"content":content,"start_date":start_date,"end_date":end_date},
+        dataType: "text",
+        success: function (result) {
+          if(result=="true"){
+            currentFunction(currentArg);
+            $("#update_activity_panel").fadeOut(500);
+          }else{
+            alert("更新失败");
+          }
+
+        },
+        error: function (e) {
+          alert("网络请求失败");
+        }
+
+      });
+    }
+
+    function deleteActivity(a_no){
+      //alert("要删除的活动编号:"+a_no);
+
+      $.ajax({
+        url: domain+"/activity/deleteActivityByA_no?a_no="+a_no,
+        type: "get",
+        dataType: "text",
+        success: function (result) {
+          if(result == "true"){
+            //  findActivityByDate(currentArg);
+            currentFunction(currentArg);
+          }else{
+            alert("删除失败，请重试...");
+          }
+        },
+        error: function (e) {
+          alert("网络请求失败");
+        }
+
+      });
+    }
+
+    function doSubmit(){
+      var title = $("#title").val();
+      var content = $("#content").val();
+      var start_date = $("#start_date").val();
+      var end_date = $("#end_date").val();
+
+    //  alert(title+","+content+","+start_date+","+end_date);
+
+      if(title.trim() == "" || content.trim()=="" || start_date.trim()=="" || end_date.trim()==""){
+        $("#message").text("请输入完整");
+        $("#message").css({color: "red"});
+        return;
+      }
+
+      $.ajax({
+        url: domain+"/activity/publishActivity",
+        type: "post",
+        dataType: "text",
+        data: {"title":title,"content":content,"start_date":start_date,"end_date":end_date},
+        success: function (result) {
+          if(result=="true"){
+            alert("发布成功");
+            currentFunction(currentArg);
+          }else{
+            $("#message").text("发布失败，请重试...");
+            $("#message").css({color: "red"});
+          }
+        },
+        error: function (e) {
+          alert("错误");
+        }
+
+      });
+
+    }
+
+
+    function searchTitle(){
+      var title = $("#search_title").val();
+      if(title.trim()=="") return;
+
+      $.ajax({
+        url: domain+"/activity/searchStudentActivityByTitle?title="+title,
+        type: "get",
+        dataType: "text",
+        success: function (result) {
+          if(result == "") {
+
+          }else{
+
+            var activityList = $.parseJSON(result);
+            findStudendByS_idList(activityList);
+          }
+        },
+        error: function (e) {
+          alert("网络请求异常");
+        }
+
+      });
+      currentFunction=searchTitle;
+      currentArg = title;
+    }
+
+  </script>
+
+
+<div class="container-fluid">
+
+  <div class="body_content bg-white row margin_top">
+
+
+    <div class="col-12 col-md-4 margin_top">
+      <h2>活动发布页面</h2><br><br>
+      <div >
+
+        <form id="form">
+
+          <div class="form-group">
+            <label for="exampleInputEmail1">标题</label>
+            <input type="text" class="form-control" name="title" id="title" placeholder="题目">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputPassword1">文本内容</label>
+            <textarea class="form-control" rows="3" name="content" id="content" placeholder="文本内容"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="exampleInputPassword1">开始时间</label>
+            <input type="date" class="form-control" name="start_date" id="start_date" >
+          </div>
+          <div class="form-group">
+            <label for="exampleInputPassword1">结束时间</label>
+            <input type="date" class="form-control" name="end_date" id="end_date" >
+          </div>
+
+
+          <button type="button" onclick="doSubmit()" class="btn btn-success">Submit</button>
+          <span id="message"></span>
+        </form>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-8 margin_top">
+
+      <h2 >所有活动</h2><br><br>
+
+
+      <div class="container-fluid">
+        <form class="navbar-form navbar-left row">
+
+          <div class="form-group col-12 col-md-6 row" >
+            <input type="text" class="form-control col-9" id="search_title" placeholder="TitleSearch">
+            <button type="button"  onclick="searchTitle()" class="btn btn-default col-3" >Submit</button>
+          </div>
+
+
+
+        </form>
+      </div>
+      <div class="row" id="activity_panel">
+
+
+
+        <table class="table">
+          <thead>
+          <tr>
+            <th>活动公告</th>
+            <th>发布人</th>
+            <th>发布时间</th>
+            <th>操作</th>
+          </tr>
+          </thead>
+          <tbody id="tbody">
+          <!--
+            <tr>
+
+              <td><a href="#" style="font-size: 20px;">郑州大学暑假夏令营活动火热进行中</a></td>
+              <td>
+
+                  <button class="btn btn-danger" type="button">删除</button>
+              </td>
+            </tr>-->
+          </tbody>
+        </table>
+
+        <div class="container-fluid">
+          <ul class="pagination">
+            <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+            <li class="page-item"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+  <div id="update_activity_panel" class="bg-white" style="position: fixed; top: 20%;left: 0px;display: none; padding: 2rem;">
+
+    <form id="update_activity_form">
+      <input type="hidden" id="a_no2"/>
+      <div class="form-group">
+        <label for="exampleInputEmail1">标题</label>
+        <input type="text"  id="title2" class="form-control"   placeholder="标题">
+      </div>
+      <div class="form-group">
+        <label for="exampleInputPassword1">内容</label>
+        <input type="text"  id="content2" class="form-control"  placeholder="内容">
+      </div>
+      <div class="form-group">
+        <label for="exampleInputPassword1">开始时间</label>
+        <input type="date"  id="start_date2" class="form-control"  placeholder="开始时间">
+      </div>
+      <div class="form-group">
+        <label for="exampleInputPassword1">结束时间</label>
+        <input type="date"  id="end_date2" class="form-control"  placeholder="结束时间">
+      </div>
+
+      <button type="button" onclick="doUpdateActivity()" class="btn btn-success">修改</button>
+      <button type="button" onclick="$('#update_activity_panel').fadeOut(500)" class="btn btn-success">关闭</button>
+      <span id="update_activity_message">
+
+                                    </span>
+    </form>
+  </div>
+</div>
+
+

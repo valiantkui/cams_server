@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>活动管理</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="../img/logo2.png" >
+    <link rel="stylesheet" type="text/css" href="../css/1s_data.css">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/popper.js/1.12.5/umd/popper.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/js/bootstrap.min.js"></script>
+    	 	<script type="text/javascript" src="../js/global_varable.js"></script>
+    <script src="../js/getUrlParam.js"></script>
+    <style>
+        .position{
+            float:right;
+        }
+    </style>
+  <script>
+    $(function(){
+       var a_no = UrlParam.param("a_no");
+       //alert(a_no);
+       $(function(){
+           //从服务器获取该活动的信息
+           $.ajax({
+               url: domain+"/activity/findActivityByA_no?a_no="+a_no,
+               type: "get",
+               dataType: "text",
+               success: function (result) {
+                   if(result == ""){
+
+                   }else{
+                       var activity = $.parseJSON(result);
+                        loadActivity(activity);
+                   }
+               }
+
+           });
+
+           $.ajax({
+               url: domain+"/activity/findParticipatorInfoByA_no?a_no="+a_no,
+               type: "get",
+               dataType: "text",
+               success: function (result) {
+                   if(result==""){
+
+                   }else{
+                       var studentList = $.parseJSON(result);
+                       loadParticipatorInfo(studentList);
+                   }
+               }
+
+           });
+       });
+
+    });
+
+    function loadParticipatorInfo(studentList){
+
+        $("#student_list").empty();
+        for(var i = 0;i<studentList.length;i++){
+            var student = studentList[i];
+            var li = document.createElement("li");
+            $(li).text(student.name);
+
+            $("#student_list").append(li);
+        }
+    }
+    function loadActivity(activity){
+        $("#title").text(activity.title);
+        alert(activity.content);
+        $("#content").text(activity.content);
+        $("#start_date").text(activity.start_date.split(" ")[0]);
+        $("#end_date").text(activity.end_date.split(" ")[0]);
+    }
+
+  </script>
+
+
+</head>
+<body>
+<!--导航栏-->
+<div id="header">
+    <script>
+        $("#header").load("header.html");
+    </script>
+    <script src="../js/checkClassSession.js"></script>
+</div>
+<div class="container-fluid margin_top">
+    <div class="row">
+        <div class="col-12 col-md-4">
+            <h3 id="title"></h3>
+            <p id="content">
+
+            </p>
+            <p class="text-muted">
+               开始时间：
+                <span id="start_date"></span><br/>
+                -结束时间：
+                <span id="end_date"></span>
+            </p>
+        </div>
+        <div class="col-12 col-md-4">
+            <h3>参与的同学</h3>
+            <ul id="student_list">
+
+            </ul>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div id="footer">
+    <script>$("#footer").load("footer.html")</script>
+</div>
+
+
+</body>
+</html>

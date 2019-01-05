@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>登录/注册页面</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="img/logo2.png" >
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/popper.js/1.12.5/umd/popper.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="./js/global_varable.js"></script>
+    <script>
+    	
+        $.ajaxSetup({
+
+
+            xhrFields: {
+                //允许带上凭据
+                withCredentials: true
+            },
+            crossDomain: true,
+        });
+
+        function doLogin(){
+            var $login_message = $("#login_message");
+            var s_id = $("#s_id").val();
+            var password = $("#password").val();
+            if(s_id =="" || password ==""){
+                $login_message.text("请输入完整");
+                $login_message.css({"color":"red"});
+                return false;
+            }
+
+
+
+
+            $.ajax({
+                url: domain+"/login/studentLogin",
+
+                type: "post",
+                data: "s_id="+s_id+"&password="+password,
+                dataType:"text",
+                success: function (result) {
+                    if(result == "true"){
+                        window.location="1Home.html";
+                    }else if(result == "s_id_false"){
+                        $login_message.text("账号不存在,请重试..");
+                        $login_message.css({"color":"red"});
+                    } else if(result == "password_false"){
+                        $login_message.text("密码错误,请重试..");
+                        $login_message.css({"color":"red"});
+                    } else{
+                        alert("服务器异常");
+                    }
+                },
+                error:function (e) {
+                    alert("网络请求异常！！");
+                }
+
+            });
+        }
+
+
+    </script>
+</head>
+<body>
+<div class="container">
+    <div class="jumbotron">
+        <h1 style="font-size: 60px;">Welcome to the The Class with Love!</h1><br>
+        <p>You can watch many useful contents here.</p>
+        <p>But first and foremost,you must sign in the system.</p>
+        <p>If you have not the username,you can ask for your monitor for a help!</p>
+        <p><!--<a class="btn btn-success btn-lg" href="#" role="button">Learn more</a>-->
+        <div class="position">
+            <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal" >学生登陆</button>
+            <button type="button" class="btn btn-success btn-lg" onclick="window.location='monitor/SignInUp.html'">班级登陆</button>
+
+        </div>
+        <div class="modal fade bs-example-modal-md" id="myModal" role="dialog" aria-labal="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">学生登陆</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group">
+                                <label class="control-label">username</label>
+                                <input type="text" name="s_id" id="s_id" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">password</label>
+                                <input type="password" name="password" id="password" class="form-control">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <span id="login_message">
+
+                        </span>
+                        <button type="button" class="btn btn-default btn-md" data-dismiss="modal">
+                            关闭
+                        </button>
+                        <button type="button" class="btn btn-success btn-md" onclick="doLogin()">
+                            登陆
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+            </div>
+        </div>
+        </p>
+    </div>
+</div>
+</body>
+</html>

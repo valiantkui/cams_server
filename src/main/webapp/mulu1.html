@@ -1,0 +1,217 @@
+
+  <meta charset="utf-8">
+
+		<style>
+		.position{
+			float:right;
+		}
+	</style>
+	<script>
+	
+		var studentInfo = null;
+		function loadStudentInfo(){
+			$.ajax({
+				url: domain+"/login/checkStudentSession?flag="+Math.random(),
+				dataType: "text",
+				success: function (result) {
+					if(result != ""){
+						studentInfo = $.parseJSON(result);
+						$("#s_id").val("hhha");
+						$("#name").val(studentInfo.name);
+						$("#s_id").val(studentInfo.s_id);
+						$("#post").val(studentInfo.post);
+						$("#current_image")[0].src=domain+"/student/downloadStudentImage?s_id="+studentInfo.s_id;
+					}
+
+				},
+				error: function(e) {
+					alert("网络请求异常");
+				}
+			});
+
+		}
+
+		function doSubmit(){
+			var name = $("#name").val();
+			var fileval = $("#file").val();
+			if(name == ""){
+				alert("请输入完整");
+				return ;
+			}
+
+			var url = domain+"/student/updateStudent";
+
+			if(fileval == "" || fileval == null){
+				$.ajax({
+					url: domain+"/student/updateStudentWithNoImage",
+					data: {"name":name},
+					type: "post",
+					success: function (result) {
+						if(result == "true"){
+							$("#message").text("更新成功");
+							$("#message").css({"color":"red"});
+							loadStudentInfo();
+						}
+
+					},
+					error: function (e) {
+						alert(e);
+					}
+				})
+			}else{
+				var formdata = new FormData(document.getElementById("form"));
+				$.ajax({
+					url: domain+"/student/updateStudentByStudent",
+					data: formdata,
+					processData: false,
+					contentType: false,
+					type: "post",
+					dataType: "text",
+					success: function (result) {
+						alert(result)
+						if(result == "true"){
+							$("#message").text("更新成功");
+							$("#message").css({"color":"red"});
+							loadStudentInfo();
+						}
+
+					},
+					error: function (e) {
+						alert(e);
+					}
+				})
+			}
+
+
+		}
+
+		function updatePassword(){
+			var password_old = $("#password_old").val();
+			var password_new1 = $("#password_new1").val();
+			var password_new2 = $("#password_new2").val();
+
+			if(password_old =="" || password_new1 == "" || password_new2==""){
+				$("#update_password_message").text("请输入完整");
+				$("#update_password_message").css({"color":"red"});
+				return;
+			}
+
+			if(password_old != studentInfo.password){
+				$("#update_password_message").text("您输入的密码不正确，请重试...");
+				$("#update_password_message").css({"color":"red"});
+				return;
+			}
+			if(password_new1 != password_new2){
+				$("#update_password_message").text("您输入的密码不正确，请重试...");
+				$("#update_password_message").css({"color":"red"});
+				return;
+			}
+
+			$.ajax({
+				url: domain+"/student/updateStudentPassword",
+				type: "get",
+				data: {"password": password_new1},
+				dataType: "text",
+				success: function (result) {
+					if(result == "true"){
+						$("#close").click();
+						alert("密码更新成功");
+					}
+				},
+				error: function (e) {
+					alert("网络请求失败");
+				}
+
+
+			})
+
+
+		}
+	</script>
+	
+	
+
+
+	<div class="container-fluid">
+		
+		<div  >
+  <h2 class="h2_body" style="text-align: left;">学生资料管理</h2>
+  <div class="position">
+		<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal01" >修改密码</button>
+		
+		</div>
+		<div class="modal fade bs-example-modal-md" id="myModal01" role="dialog" aria-labal="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-md">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title">修改密码</h4>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<form>
+							<div class="form-group">
+								<label class="control-label">原密码</label>
+								<input type="password" placeholder="原密码" id="password_old" class="form-control">
+							</div>
+							<div class="form-group">
+								<label class="control-label">新密码</label>
+								<input type="password" placeholder="新密码" id="password_new1" class="form-control">
+							</div>
+							<div class="form-group">
+								<label class="control-label">确认新密码</label>
+								<input type="password" placeholder="确认新密码" id="password_new2" class="form-control">
+							</div>
+						</form>
+					</div>
+					<div class="modal-footer">
+						<span id="update_password_message"></span>
+						<button type="button" class="btn btn-default btn-md" id="close" data-dismiss="modal">
+							关闭
+						</button>
+						<button type="button" class="btn btn-success btn-md" onclick="updatePassword();">
+							确认
+						</button>
+					</div>
+				</div>
+			</div>
+			
+		</div>
+  <br><br>
+  <div  style="margin: 0px 250px;">
+  	
+  <form id="form">
+  <div class="form-group">
+    <label for="exampleInputEmail1">学号</label>
+    <input type="number" class="form-control" id="s_id"  readonly>
+  </div>
+  
+  <div class="form-group">
+    <label for="exampleInputPassword1">姓名</label>
+    <input type="text" class="form-control" name="name" id="name" placeholder="姓名">
+  </div>
+  <div class="form-group">
+    <label for="exampleInputPassword1">职位</label>
+    <input type="text" class="form-control" id="post" placeholder="职位" disabled="disabled">
+  </div>
+  
+  <div class="form-group">
+    <label for="exampleInputPassword1">当前头像</label>
+    <img src="img/logo1.png" id="current_image">
+  </div>
+  <div class="form-group">
+    <label for="exampleInputPassword1">更改头像</label>
+    <input type="file" class="form-control" id="file" name="file" placeholder="更改的图片">
+  </div>
+  
+  <button type="button" onclick="doSubmit()" class="btn btn-success">Submit</button>
+	  <span id="message"></span>
+</form>
+  </div>
+</div>
+
+    </div>
+   </div>
+    
+</div>

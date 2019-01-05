@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>爱心班级-后台管理</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+   <link rel="icon" href="img/logo2.png" >
+  <!-- <link rel="stylesheet" type="text/css" href="css/6Manage.css">-->
+  <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/css/bootstrap.min.css">
+  <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://cdn.staticfile.org/popper.js/1.12.5/umd/popper.min.js"></script>
+  <script src="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="./js/global_varable.js"></script>
+  	<style>
+		.position{
+			float:right;
+		}
+	</style>
+	<script>
+		var $current2;
+		$(function(){
+			$current2=$("#current2");
+		});
+		function loadContent2(t){
+			var flag = t.innerText;
+			$current2.parent().removeClass("active");
+			$current2=$(t);
+			//alert($current.parent());
+			$current2.parent().addClass("active");
+		}
+
+        function SignOut(){
+            $.ajax({
+                url: domain+"/login/studentLogout",
+                type: "get",
+                dataType: "text",
+                success: function (result) {
+                    if(result == "true"){
+                        window.location="SignIn.html";
+                    }else{
+                        alert("退出登陆失败");
+                    }
+                },
+                error: function(e){
+                    alert("网络请求异常");
+                }
+            });
+        }
+	</script>
+
+</head>
+	<body>
+
+
+
+<nav  class="navbar navbar-expand-lg  navbar-dark bg-dark" >
+		
+  	<a class="navbar-brand" href="#">后台管理系统</a>
+  	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav1" aria-controls="navbarNav1" aria-expanded="false" aria-label="Toggle navigation">
+  	  <span class="navbar-toggler-icon"></span>
+  	</button>
+  <div class="collapse navbar-collapse " id="navbarNav1"    >
+    <ul class="navbar-nav nav ">
+      <li class="nav-item active" >         <!--单击之后，在id=content中加载目录.html，单击也执行高亮的变化active-->
+        <a id="current2" class="nav-link" onclick="$('#content2').load('mulu1.html');loadContent2(this)">个人资料管理 <span class="sr-only"></span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" onclick="$('#content2').load('mulu2.html');loadContent2(this)">课件管理</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" onclick="$('#content2').load('mulu3.html');loadContent2(this)">活动管理</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link " onclick="$('#content2').load('mulu4.html');loadContent2(this)">管理团购</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link " onclick="$('#content2').load('mulu5.html');loadContent2(this)">作业管理</a>
+      </li>
+    </ul>
+  </div>
+    <div class="position" >
+        <span id="studentInfo" class="text-white"></span>
+        <button type="button" class="btn btn-default btn-md"  id="sign_out" onclick="SignOut()">退出登陆</button>
+    </div>
+    <script src="js/checkStudentSession.js"></script>
+
+</nav>
+
+        <div class="container-fluid " id="content2">
+            <h2>欢迎来到后台管理系统</h2><br />
+            <p>您可以放心管理后台内容，速度很快哦！！</p>
+            <img src="img/book3.PNG" width="100%"/>
+        </div>
+<!--底部内容-->
+
+        <div id="footer">
+            <script>$("#footer").load("footer.html")</script>
+        </div>
+
+	</body>
+</html>

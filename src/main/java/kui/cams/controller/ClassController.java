@@ -29,6 +29,7 @@ import kui.cams.dao.ClassDao;
 import kui.cams.dao.StudentDao;
 import kui.cams.dao.SyllabusDao;
 import kui.cams.dao.TaskDao;
+import kui.cams.entity.Class;
 import kui.cams.entity.Student;
 import kui.cams.entity.Syllabus;
 import kui.cams.entity.Task;
@@ -65,6 +66,83 @@ public class ClassController {
 	public List<Student> findCurrentClassStudent(HttpSession session){
 		String c_no = (String) session.getAttribute("c_no");
 		return studentDao.findStudentByC_no(c_no);
+	}
+	
+	/**
+	 * 只能由班级用户更新
+	 * @param name
+	 * @param school
+	 * @param profession
+	 * @param file
+	 * @param session
+	 * @return
+	 */
+	@RequestMapping("/updateClass")
+	@ResponseBody
+	public String updateClass(String name,String school,String profession,MultipartFile file,HttpSession session) {
+		String c_no = (String) session.getAttribute("c_no");
+		kui.cams.entity.Class c = new kui.cams.entity.Class();
+		c.setC_no(c_no);
+		c.setName(name);
+		c.setSchool(school);
+		c.setProfession(profession);
+		if(file.isEmpty()) {
+			classDao.updateClassWithNoImage(c);
+		}else {
+			String suffix = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
+			c.setImage_path(c_no + suffix);
+			try {
+				file.transferTo(new File(Global.classImagePath+c.getImage_path()));
+				classDao.updateClass(c);
+			} catch (IllegalStateException e) {
+				return "false";
+			} catch (IOException e) {
+				return "false";
+			}
+		}
+		//System.out.println("file.isEmpty:"+file.isEmpty());
+		
+		return "true";
+	}
+	@RequestMapping("/updateClassPassword")
+	@ResponseBody
+	public String updateClassPassword(String password,HttpSession session) {
+		String c_no = (String) session.getAttribute("c_no");
+		
+		try {
+			classDao.updateClassPassword(c_no, password);
+		}catch (Exception e) {
+			return "false";
+		}
+		return "true";
+	}
+	
+	
+	@RequestMapping("/downloadClassImage")
+	public void downloadClassImage(HttpServletResponse response,HttpSession session) {
+		String c_no = (String) session.getAttribute("c_no");
+		kui.cams.entity.Class c = classDao.findClassByC_no(c_no);
+		String path = c.getImage_path();
+		response.setContentType("image/png");
+		try {
+			FileInputStream fis = new FileInputStream(Global.classImagePath+path);
+			OutputStream os = response.getOutputStream();
+			byte[] bytes = new byte[1024*10];
+			int i = -1;
+			while((i=fis.read(bytes))!=-1) {
+				os.write(bytes, 0, i);
+			}
+			
+			os.flush();
+			fis.close();
+			os.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	@RequestMapping("/addStudent")

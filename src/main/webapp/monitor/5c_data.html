@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>班级资料管理</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+   <link rel="icon" href="../img/logo2.png" >
+   <link rel="stylesheet" type="text/css" href="../css/1s_data.css">
+  <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/css/bootstrap.min.css">
+  <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://cdn.staticfile.org/popper.js/1.12.5/umd/popper.min.js"></script>
+  <script src="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/js/bootstrap.min.js"></script>
+   	<script type="text/javascript" src="../js/global_varable.js"></script>
+		<style>
+		.position{
+			float:right;
+		}
+	</style>
+	<script>
+
+
+		$(function () {
+
+			findClassInfoByC_no();
+		});
+		var classInfo = null;
+
+		function findClassInfoByC_no(){
+			$.ajax({
+				url: domain+"/login/checkClassSession",
+				type: "get",
+				dataType: "text",
+				success: function (result) {
+					//alert(result);
+					classInfo = $.parseJSON(result);
+					loadClassInfo(classInfo);
+				},
+				error: function (e) {
+					alert("网络请求异常");
+				}
+			})
+		}
+
+		function loadClassInfo(classInfo){
+			$("#c_no").val(classInfo.c_no);
+			$("#name").val(classInfo.name);
+			$("#enrol_date").val(classInfo.enrol_date);
+			$("#school").val(classInfo.school);
+			$("#profession").val(classInfo.profession);
+			$("#class_image")[0].src=domain+"/class/downloadClassImage";
+		}
+
+
+		function doSubmit(){
+			var formdata = new FormData(document.getElementById("form"));
+			$.ajax({
+				url: domain+"/class/updateClass",
+				type: "post",
+				data: formdata,
+				processData: false,
+				contentType: false,
+				dataType: "text",
+				success: function (result) {
+					alert(result);
+					findClassInfoByC_no();
+
+				},
+				error: function (e) {
+					alert("网络请求异常");
+				}
+			});
+		}
+
+		function updatePassword(){
+			var password_old = $("#password_old").val();
+			var password_new1 = $("#password_new1").val();
+			var password_new2 = $("#password_new2").val();
+
+			if(password_old =="" || password_new1 == "" || password_new2==""){
+				$("#update_password_message").text("请输入完整");
+				$("#update_password_message").css({"color":"red"});
+				return;
+			}
+
+			if(password_old != classInfo.password){
+				$("#update_password_message").text("您输入的原密码不正确，请重试...");
+				$("#update_password_message").css({"color":"red"});
+				return;
+			}
+			if(password_new1 != password_new2){
+				$("#update_password_message").text("您输入的新密码不一致，请重试...");
+				$("#update_password_message").css({"color":"red"});
+				return;
+			}
+
+			if(password_old==password_new1){
+				$("#update_password_message").text("新密码和旧密码不能一致，请重试...");
+				$("#update_password_message").css({"color":"red"});
+				return;
+			}
+
+			$.ajax({
+				url: domain+"/class/updateClassPassword",
+				type: "get",
+				data: {"password": password_new1},
+				dataType: "text",
+				success: function (result) {
+					if(result == "true"){
+						$("#close").click();
+						alert("密码更新成功");
+						findClassInfoByC_no();
+					}
+				},
+				error: function (e) {
+					alert("网络请求失败");
+				}
+
+
+			})
+		}
+	</script>
+	
+	
+	</head>
+	<body>
+		<!--导航栏-->
+			<div id="header">
+				<script>
+					$("#header").load("header.html");
+				</script>
+			</div>
+			<script src="../js/checkClassSession.js"></script>
+	<div class="container-fluid">
+		
+		<div class="" >
+	  <h2 class="h2_body" style="text-align: left;">班级资料</h2>
+	  <div class="position">
+
+			</div>
+
+  <br><br>
+  <div  class="container">
+	  <div class="container">
+
+	  	<button type="button" class="btn btn-primary btn-lg float-right" data-toggle="modal" data-target="#myModal" >修改密码</button>
+	  </div>
+
+	  <form style="clear:both;" id="form">
+  <div class="form-group">
+    <label for="c_no">班级编号</label>
+    <input type="number" class="form-control"  id="c_no" placeholder="班级编号" readonly />
+  </div>
+  
+  <div class="form-group">
+    <label for="name">班级名称</label>
+    <input type="text" class="form-control" name="name" id="name" placeholder="班级名称" />
+  </div>
+  <div class="form-group">
+    <label for="enrol_date">入学年份</label>
+    <input type="date" class="form-control" id="enrol_date" placeholder="入学年份" readonly />
+  </div>
+  <div class="form-group">
+    <label for="school">所属学校</label>
+    <input type="text" class="form-control" name="school" id="school" placeholder="所属学校" />
+  </div>
+  <div class="form-group">
+    <label for="profession">所属专业</label>
+    <input type="text" class="form-control" name="profession" id="profession" placeholder="所属专业" />
+  </div>
+  <div class="form-group">
+    <label for="exampleInputPassword1">班级图片显示</label>
+    <img id="class_image" src="../img/logo1.png" width="100%">
+  </div>
+  <div class="form-group">
+    <label for="file">更改的图片</label>
+    <input type="file" class="form-control" id="file" name="file" placeholder="更改的图片" />
+  </div>
+  
+  <button type="button" onclick="doSubmit();" class="btn btn-success">更新</button>
+</form>
+  </div>
+</div>
+
+
+    </div>
+
+    
+		<div id="footer">
+			<script>$("#footer").load("footer.html")</script>
+		</div>
+
+		<div class="modal fade bs-example-modal-md" id="myModal" role="dialog" aria-labal="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-md">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title">修改密码</h4>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<form>
+							<div class="form-group">
+								<label class="control-label">原密码</label>
+								<input type="password" id="password_old" placeholder="原密码" class="form-control">
+							</div>
+							<div class="form-group">
+								<label class="control-label">新密码</label>
+								<input type="password" id="password_new1" placeholder="新密码" class="form-control">
+							</div>
+							<div class="form-group">
+								<label class="control-label">确认新密码</label>
+								<input type="password" id="password_new2" placeholder="确认新密码" class="form-control">
+							</div>
+						</form>
+					</div>
+					<div class="modal-footer">
+						<span id="update_password_message">
+
+						</span>
+						<button type="button" id="close" class="btn btn-default btn-md" data-dismiss="modal">
+							关闭
+						</button>
+						<button type="button" class="btn btn-success btn-md" onclick="updatePassword()">
+							修改
+						</button>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+
+
+	</body>
+</html>

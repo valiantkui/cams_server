@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>爱心班级-书籍订阅</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="img/logo2.png" >
+    <link rel="stylesheet" type="text/css" href="css/4Book.css">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/popper.js/1.12.5/umd/popper.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/js/bootstrap.min.js"></script>
+    	 	<script type="text/javascript" src="../js/global_varable.js"></script>
+    <style>
+        .position{
+            float:right;
+        }
+        .padding_vertical{
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+         .unfoces{
+            height: 100%;
+            overflow: hidden;
+        }
+.row{
+
+margin-left:0px;
+
+margin-right:0px;
+
+}
+    </style>
+
+    <script>
+
+        var global_purchaseList = null;
+        var global_purchase = null;
+        $(function(){
+            //默认按发布时间排序，显示尚未截至的团购
+            findAllInPurchase();
+
+        });
+        function findAllInPurchase(){
+
+            $.ajax({
+                url: domain+"/purchase/findAllInPurchase",
+                type: "get",
+                dataType: "text",
+                success: function (result) {
+                    // alert(result);
+                    if(result != ""){
+                        global_purchaseList=$.parseJSON(result);
+                        loadPurchase(global_purchaseList);
+                    }
+                } ,
+                error: function (e) {
+                    alert("网络请求错误");
+                }
+
+            });
+        }
+
+        function findAllPurchase(){
+            $.ajax({
+                url: domain+"/purchase/findAllPurchase",
+                type: "get",
+                dataType: "text",
+                success: function (result) {
+                    // alert(result);
+                    if(result != ""){
+                        global_purchaseList=$.parseJSON(result);
+                        loadPurchase(global_purchaseList);
+                    }
+                } ,
+                error: function (e) {
+                    alert("网络请求错误");
+                }
+
+            });
+        }
+
+        function loadPurchase(purchaseList){
+            var s_idList = [];
+            for(var i = 0;i<purchaseList.length;i++){
+                var purchase = purchaseList[i];
+                if(purchase.s_id !=null && purchase.s_id != "" && s_idList.indexOf(purchase.s_id) == -1)
+                    s_idList.push(purchase.s_id);
+            }
+
+            var s_idJson = JSON.stringify(s_idList);
+            //alert(s_idJson);
+            $.ajax({
+                url: domain+"/student/findStudentByS_idList",
+                type: "post",
+                dataType: "text",
+                data: {"s_idJson":s_idJson},
+                success: function(result){
+                    if(result != ""){
+
+                        loadPurchaseInfo(purchaseList,$.parseJSON(result));
+                    }
+                },
+                error: function (e) {
+                    alert("网络请求异常");
+                }
+            })
+        }
+
+        function loadPurchaseInfo(purchaseList,studentList){
+            $("#purchase_panel").empty();
+            for(var i = 0;i<purchaseList.length;i++){
+                var student = null;
+                var purchase = purchaseList[i];
+                for(var j = 0;j<studentList.length;j++){
+                    if(purchase.s_id==studentList[j].s_id){
+                        student=studentList[j];
+                        break;
+                    }
+                }
+                var div_row = document.createElement("div");
+                $(div_row).addClass("row");
+                $(div_row).css({"margin-top":"1rem"});
+                var div_title = document.createElement("div");
+                $(div_title).addClass("col-4 text-center");
+                var div_date = document.createElement("div");
+                $(div_date).addClass("col-4 text-center");
+                var div_publisher = document.createElement("div");
+                $(div_publisher).addClass("col-2 text-center");
+                var div_option = document.createElement("div");
+                $(div_option).addClass("col-2 text-center");
+                $(div_title).text(purchase.title);
+                $(div_date).text(purchase.publish_date.split(" ")[0]+"-"+purchase.end_date.split(" ")[0]);
+
+                if(student==null){
+                    $(div_publisher).text("班级用户");
+                }else{
+                    $(div_publisher).text(student.name);
+                }
+
+
+                $(div_option).append('<a  href="###" onclick="purchaseInfo('+purchase.p_no+')">详情</a>');
+                $(div_row).append(div_title,div_date,div_publisher,div_option);
+                $("#purchase_panel").append(div_row);
+            }
+        }
+        function removeFouces(){
+        	  $("html").removeClass("unfoces");
+              $("body").removeClass("unfoces");
+        }
+        function purchaseInfo(p_no){
+            var maxw = document.documentElement.clientWidth;
+            var maxh = document.documentElement.clientHeight;
+            //alert(maxw+",,"+maxh);
+            $("#purchase_info_panel").css({"position":"fixed",width:maxw+"px",height:maxh+"px","top":"0px","left":"0px","overflow":"auto"});
+
+            $("#purchase_info_panel").show();
+            $("html").addClass("unfoces");
+            $("body").addClass("unfoces");
+            
+            
+
+            var purchase = null;
+            //alert("global_purchaseList.length:"+global_purchaseList.length);
+            for(var i = 0;i<global_purchaseList.length;i++){
+                if(global_purchaseList[i].p_no == p_no){
+                    purchase = global_purchaseList[i];
+                    break;
+                }
+            }
+            global_purchase = purchase;
+            $("#info_title").text(purchase.title);
+            $("#info_content").text(purchase.content);
+            $("#info_publish_date").text(purchase.publish_date);
+            $("#info_end_date").text(purchase.end_date);
+
+            findGoodsInfoByP_no(p_no);
+
+
+        }
+        function findGoodsInfoByP_no(p_no){
+            $.ajax({
+                url: domain+"/purchase/findGoodsInfoByP_no?p_no="+p_no,
+                type: "get",
+                dataType: "text",
+                success: function (result) {
+                    //alert(result);
+                    var goodsInfoList = $.parseJSON(result);
+                    loadGoodsInfo(goodsInfoList);
+                    loadStudentPurchaseInfo(goodsInfoList);
+
+                },
+                error: function (e) {
+                    alert("网络请求异常");
+                }
+
+
+            });
+
+        }
+        function loadStudentPurchaseInfo(goodsInfoList){
+            //获取每个学生都购了哪些书，一共多少钱
+            var studentPurchaseInfoList = new Array();
+            var s_idList = new Array();
+            for(var i = 0;i<goodsInfoList.length;i++){
+                var goodsInfo = goodsInfoList[i];
+                var goods = goodsInfo.goods;
+                var studentInfoList = goodsInfo.studentInfoList;
+                for(var j = 0;j<studentInfoList.length;j++){
+                    var studentInfo = studentInfoList[j];
+                    var student = studentInfo.student;
+                    var index = s_idList.indexOf(student.s_id);
+                    if(index == -1){
+                        //如果等于-1,则添加到集合中
+                        s_idList.push(student.s_id);
+                        var studentPurchaseInfo = new Object();
+                        studentPurchaseInfo.student = student;
+                        studentPurchaseInfo.goodsInfoList = new Array();
+                        var gi = new Object();
+                        gi.goods = goods;
+                        gi.number = studentInfo.number;
+                        studentPurchaseInfo.goodsInfoList.push(gi);
+
+                        studentPurchaseInfoList.push(studentPurchaseInfo);
+                    }else{
+                        var gi = new Object();
+                        gi.goods = goods;
+                        gi.number = studentInfo.number;
+                        studentPurchaseInfoList[index].goodsInfoList.push(gi);
+                    }
+
+                }
+            }
+
+
+            $("#info_goods_list").empty();
+            for(var i = 0;i<studentPurchaseInfoList.length;i++){
+                var div_row =document.createElement("div");
+                $(div_row).addClass("row");
+                var div_name = document.createElement("div");
+                $(div_name).addClass("col");
+                var div_goodsNum = document.createElement("div");
+                $(div_goodsNum).addClass("col");
+                var div_allPrice = document.createElement("div");
+                $(div_allPrice).addClass("col");
+
+
+                var div_container = document.createElement("div");
+                $(div_container).addClass("container");
+
+                var goodsNum = 0;
+                var allPrice = 0;
+
+                var studentPurchaseInfo = studentPurchaseInfoList[i];
+                var student = studentPurchaseInfo.student;
+                var goodsInfoList = studentPurchaseInfo.goodsInfoList;
+                for(var j = 0;j<goodsInfoList.length;j++){
+                    var goodsInfo = goodsInfoList[j];
+                    goodsNum += goodsInfo.number;
+                    allPrice += goodsInfo.number * goodsInfo.goods.price;
+                    var span = document.createElement("span");
+                    $(span).addClass("badge badge-secondary");
+                    $(span).text(goodsInfo.goods.name+"|"+goodsInfo.number+"件");
+                    $(div_container).append(span);
+
+
+                }
+                $(div_name).text(student.name);
+                $(div_goodsNum).text(goodsNum);
+                $(div_allPrice).text(allPrice);
+                $(div_row).append(div_name,div_goodsNum,div_allPrice);
+                $("#info_goods_list").append(div_row,div_container,"<hr/>");
+
+            }
+
+        }
+
+
+        function loadGoodsInfo(goodsInfoList){
+
+            $("#info_student_list").empty();
+            for(var i = 0;i<goodsInfoList.length;i++){
+                var goods = goodsInfoList[i].goods;
+                var studentInfoList = goodsInfoList[i].studentInfoList;
+
+
+                var div_row = document.createElement("div");
+                $(div_row).addClass("row");
+                var div_col_name = document.createElement("div");
+                $(div_col_name).addClass("col");
+                var div_col_price = document.createElement("div");
+                $(div_col_price).addClass("col");
+                var div_col_stuNum = document.createElement("div");
+                $(div_col_stuNum).addClass("col");
+                var div_col_goodsNum = document.createElement("div");
+                $(div_col_goodsNum).addClass("col");
+                $(div_col_name).text(goods.name);
+                $(div_col_price).text(goods.price);
+                $(div_col_stuNum).text(studentInfoList.length);
+                $(div_row).append(div_col_name,div_col_price,div_col_stuNum,div_col_goodsNum);
+
+
+                var div_container = document.createElement("div");
+                $(div_container).addClass("container");
+
+                var allGoodsNum = 0;
+                for(var j = 0;j<studentInfoList.length;j++){
+                    var studentInfo = studentInfoList[j];
+                    allGoodsNum += studentInfo.number;
+                    var student = studentInfo.student;
+                    var span = document.createElement("span");
+                    $(span).addClass("badge badge-light");
+                    $(span).text(student.name+"|"+studentInfo.number+"件");
+                    $(div_container).append(span);
+                }
+                $(div_col_goodsNum).text(allGoodsNum);
+                $("#info_student_list").append(div_row,div_container,"<hr/>");
+            }
+        }
+        function joinPurchaseGoods(g_no) {
+            var number = $(".good_"+g_no).val();
+            var p_no = global_purchase.p_no;
+            if(number.trim()==""){
+                alert('请输入数量');
+                return ;
+            }
+
+            $.ajax({
+                url: domain+"/purchase/joinPurchaseGoods",
+                type: "post",
+                data: {"g_no":g_no,"number":number,"p_no":p_no},
+                dataType: "text",
+                success: function (result) {
+                    if(result == "true"){
+                        findGoodsInfoByP_no(p_no);
+                    }else{
+                        alert("参与失败");
+                    }
+
+
+                },
+                error: function (e) {
+                    alert("网络请求异常");
+                }
+            });
+
+        }
+
+
+
+
+    </script>
+
+</head>
+<body style="position: relative;">
+<!--导航栏-->
+<div id="header">
+    <script>
+        $("#header").load("header.html");
+    </script>
+    <script src="../js/checkClassSession.js"></script>
+</div>
+<!--轮播图-->
+<div class="container-fluid">
+    <div class="row">
+
+        <div id="movePhoto" >
+            <script>$("#movePhoto").load("movePhoto4.html")</script>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="card" style="width:100%">
+            <div class="card-body" >
+                <!--默认展现正在进行的团购-->
+                <div class=" container-fluid">
+               
+
+                        <h4>正在火热进行中的团购</h4>
+                   
+                    </div>
+                    <div class=" float-right">
+
+                        <button class="btn btn-primary " onclick="findAllPurchase()">全部</button>
+                        <button class="btn btn-primary " onclick="findAllInPurchase()">正在进行</button>
+                    </div>
+                </div>
+                <div id="purchase_panel" style="clear: both">
+
+                    <div class="row">
+
+                        <div class="col-4 text-center">
+                            团购标题
+                        </div>
+                        <div class="col-4 text-center">
+                            时间
+                        </div>
+                        <div class="col-2 text-center">
+                            发布者
+                        </div>
+                        <div class="col-2 text-center">
+                            操作
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="bg-white " id="purchase_info_panel" style="position: absolute; display: none; padding: 2rem;overflow-y: auto">
+        <div class="container-fluid">
+            <button class="btn btn-success float-right" onclick="$('#purchase_info_panel').fadeOut(500);removeFouces()">关闭</button>
+        </div>
+        <h2>活动详情页面</h2>
+        <div class="row" >
+            <div class="col-12 col-md-6">
+                <h3 id="info_title"></h3>
+                <p id="info_content">
+
+                </p>
+                <p class="text-muted">
+                    发布时间：
+                    <span id="info_publish_date"></span><br/>
+                    -结束时间：
+                    <span id="info_end_date"></span>
+                </p>
+                <h3>团购参与情况</h3>
+                <div class="row" style="font-size: 20px;">
+                    <div class="col">团购物品</div>
+                    <div class="col">单价</div>
+                    <div class="col">总人数</div>
+                    <div class="col">物品总数</div>
+                </div>
+
+                <div id="info_student_list" style="border: 1px solid #1E9FFF;">
+
+                </div>
+
+
+            </div>
+            <div class="col-12 col-md-6">
+                <h3>学生购买情况</h3>
+                <div class="row" style="font-size: 20px;">
+                    <div class="col">学生姓名</div>
+                    <div class="col">购买总数</div>
+                    <div class="col">总金额</div>
+                </div>
+
+                <div id="info_goods_list" style="border: 1px solid #1E9FFF;">
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!--底部内容-->
+<div id="footer">
+    <script>$("#footer").load("footer.html")</script>
+</div>
+
+
+
+</body>
+</html>

@@ -31,7 +31,10 @@
 		where a_no = #{a_no}
 	
 	</select>
-	
+	<select id="findActivityByC_no" parameterType="String" resultType="kui.cams.entity.Activity">
+		select * from activity 
+		where c_no = #{c_no}
+	</select>
 	<select id="findActivityByS_id" parameterType="String" resultType="kui.cams.entity.Activity">
 	select * from activity 
 		where s_id = #{s_id}

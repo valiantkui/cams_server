@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>登录/注册页面</title>
+		  <meta name="viewport" content="width=device-width, initial-scale=1">
+		   <link rel="icon" href="../img/logo2.png" >
+		  <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/css/bootstrap.min.css">
+		<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+
+		  <script src="https://cdn.staticfile.org/popper.js/1.12.5/umd/popper.min.js"></script>
+		  <script src="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/js/bootstrap.min.js"></script>
+		  	<script type="text/javascript" src="../js/global_varable.js"></script>
+
+		<script>
+
+
+			$.ajaxSetup({
+
+
+				xhrFields: {
+					//允许带上凭据
+					withCredentials: true
+				},
+				crossDomain: true,
+			});
+			/*$.ajaxSetup({
+
+
+
+				xhrFiled:{
+					withCredentials: true
+				},
+				crossDomain: true
+			});*/
+
+			var cnoOk = false;
+			function doSubmit(){
+				if($("#c_no").val().trim()==""
+						|| $("#name").val().trim()==""
+						|| $("#school").val().trim()==""
+						|| $("#profession").val().trim()==""
+						|| $("#password").val().trim()==""
+						|| $("#password2").val().trim()==""
+						|| $("#enrol_date").val().trim()==""
+						|| $("#file").val().trim() == "") {
+					$("#message").text("请输入完整");
+					$("#message").css({color: "red"});
+					return false;
+				}
+
+				if(!cnoOk){
+					$("#c_no_message").text("账号不可用");
+					$("#c_no_message").css({color: "red"});
+					$("#message").text("账号不可用");
+					$("#message").css({color: "red"});
+					return false;
+				}
+				if($("#password").val() != $("#password2").val()) {
+					$("#message").text("密码不一致");
+					$("#message").css({color: "red"});
+					return false;
+				}
+				$("#message").text("格式正确,正在提交...");
+				$("#message").css({color: "green"});
+
+				var formdata = new FormData(document.getElementById("register_form"));
+
+				$.ajax({
+					url: domain+"/register/classRegister",
+					type: "post",
+					data:formdata,
+					dataType:"text",
+					processData: false,
+					contentType: false,
+					success:function(result){
+						if(result=="true"){
+							alert("提交成功,您可以尝试登陆");
+							window.location="SignInUp.html";
+						}else if(result == "img_false"){
+							alert("图片上传失败");
+						} else if(result == "db_false"){
+							alert("数据库更新失败");
+						}else{
+							alert("异常");
+						}
+						//alert(result)
+					},
+					error:function(e){
+						alert("错误！！");
+					}
+				});
+				return true;
+			}
+
+			function checkC_no(){
+				var c_no = $("#c_no").val();
+				$.ajax({
+					url: domain+"/register/checkC_no?c_no="+c_no,
+					type: "get",
+					dataType: "text",
+					success: function (result) {
+						if(result=="true"){
+							cnoOk=true;
+							$("#c_no_message").text("账号可已使用");
+							$("#c_no_message").css({color: "green"});
+
+						}else{
+							cnoOk=false;
+							$("#c_no_message").text("账号不可用");
+							$("#c_no_message").css({color: "red"});
+						}
+					},
+					error: function (e) {
+						alert("错误！");
+					}
+
+
+				});
+			}
+
+			function doLogin(){
+				var $login_message = $("#login_message");
+				if($("#login_c_no").val() =="" || $("#login_password").val()==""){
+					$login_message.text("请输入完整");
+					$login_message.css({"color":"red"});
+					return false;
+				}
+
+
+				//var formdata = new FormData(document.getElementById("login_form"));
+				var c_no = $("#login_c_no").val();
+				var password = $("#login_password").val();
+				$.ajax({
+					url: domain+"/login/classLogin",
+
+					type: "post",
+					data: "c_no="+c_no+"&password="+password,
+					dataType:"text",
+
+
+
+					success: function (result) {
+						if(result == "true"){
+
+							window.location="1s_data.html";
+						}else if(result == "c_no_false"){
+							$login_message.text("账号不存在,请重试..");
+							$login_message.css({"color":"red"});
+						} else if(result == "password_false"){
+							$login_message.text("密码错误,请重试..");
+							$login_message.css({"color":"red"});
+						} else{
+							alert("服务器异常");
+						}
+					},
+					error:function (e) {
+						alert("错误！！");
+					}
+
+				});
+			}
+
+
+		</script>
+	</head>
+	<body>
+		<div class="container">
+		<div class="jumbotron">
+		  <h2>Welcome to the Management System</h2><br>
+		  <p>You can arrange the use of every part!</p>
+		  <p>But first and foremost,you must sign in the system.</p>
+		  <p>If you have not the username,you can sign up by onclick the button below!</p>
+		 
+			<div class="position">
+				<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal" >班级登陆</button>
+				<button type="button" class="btn btn-success btn-lg" data-toggle="modal" data-target="#myModalUp" >班级注册</button>
+
+				</div>
+				<div class="modal fade bs-example-modal-md" id="myModal" role="dialog" aria-labal="myModalLabel" aria-hidden="true">
+					<div class="modal-dialog modal-md">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h4 class="modal-title">Sign in</h4>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<div class="modal-body">
+								<form id="login_form">
+									<div class="form-group">
+										<label class="control-label">班级账号：</label>
+										<input type="text"  name="c_no" id="login_c_no" class="form-control">
+									</div>
+									<div class="form-group">
+										<label class="control-label">密码:</label>
+										<input type="password" name="password" id="login_password" class="form-control">
+									</div>
+								</form>
+							</div>
+							<div class="modal-footer">
+								<span id="login_message"></span>
+
+								<button type="button" class="btn btn-default btn-md" data-dismiss="modal">
+									Close
+								</button>
+								<button type="button" class="btn btn-success btn-md" onclick="doLogin()">
+									Sign In
+								</button>
+							</div>
+						</div>
+					</div>
+
+				</div>
+
+		
+		<div class="modal fade bs-example-modal-md" id="myModalUp" role="dialog" aria-labal="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-md">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title">Sign up</h4>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<form id="register_form">
+							<div class="form-group">
+								<label class="control-label">班级编号:</label><span id="c_no_message"></span>
+								<input type="text" name="c_no" id="c_no" class="form-control" onblur="checkC_no()">
+							</div>
+							<div class="form-group">
+								<label class="control-label">班级名称:</label><span id="name_message"></span>
+								<input type="text" name="name" id="name" class="form-control">
+							</div>
+							<div class="form-group">
+								<label class="control-label">学校:</label><span id="school_message"></span>
+								<input type="text" name="school" id="school" class="form-control">
+							</div>
+							<div class="form-group">
+								<label class="control-label">专业:</label><span id="profession_message"></span>
+								<input type="text" name="profession" id="profession" class="form-control">
+							</div>
+							<div class="form-group">
+								<label class="control-label">密码:</label><span id="password_message"></span>
+								<input type="password" name="password" id="password" class="form-control">
+							</div>
+							<div class="form-group">
+								<label class="control-label">密码确认:</label><span id="password2_message"></span>
+								<input type="password" name="password2" id="password2" class="form-control">
+							</div>
+							<div class="form-group">
+								<label class="control-label">入学日期:</label><span id="enrol_date_message"></span>
+								<input type="date" name="enrol_date" id="enrol_date" class="form-control">
+							</div>
+							<div class="form-group">
+								<label class="control-label">班级头像:</label><span id="file_message"></span>
+								<input type="file" name="file" id="file" class="form-control">
+							</div>
+						</form>
+					</div>
+					<div class="modal-footer">
+						<span id="message"></span>
+						<button type="button" class="btn btn-default btn-md" data-dismiss="modal">
+							Close
+						</button>
+						<button type="button" class="btn btn-primary btn-md" onclick="doSubmit()">
+							Sign Up
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+  
+	</div>
+</div>
+	</body>
+</html>

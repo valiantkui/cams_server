@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>班级管理-链接详情</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+   <link rel="icon" href="../img/logo2.png" >
+   <link rel="stylesheet" type="text/css" href="../css/1s_data.css">
+  <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/css/bootstrap.min.css">
+  <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://cdn.staticfile.org/popper.js/1.12.5/umd/popper.min.js"></script>
+  <script src="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/js/bootstrap.min.js"></script>
+		<style>
+		.position{
+			float:right;
+		}
+	</style>
+	<script>
+		var $current;
+		$(function(){
+			$current=$("#current");
+		});
+		function loadContent(t){
+			//alert(t.innerHTML)
+			var flag = t.innerText;
+			$current.parent().removeClass("active");
+			$current=$(t);
+			//alert($current.parent());
+			$current.parent().addClass("active");
+			
+
+		}
+	</script>
+	
+	
+	</head>
+	<body>
+		<!--导航栏-->
+			<!--<div id="header">
+				<script>
+					$("#header").load("1header.html");
+				</script>
+			</div>-->
+	<div class="container">
+		<div class="position" >
+  	<button type="button" class="btn btn-default btn-md" data-toggle="modal" data-target="#myModalUp" onclick="window.location='4purchase.html'">Sign out</button>
+  </div>
+		
+		<div class="body_content" style="height: 1000px;text-align: center;">
+
+    <h2 class="h2_body">紧急紧急！！团购JAVA书</h2><br><br>
+    <p>发布者：XXX</p>
+    <p> 
+    	本书是一本与众不同的Java入门好书。作者以独特的视角，向Java初学者讲述了如何才能真正理解和掌握Java语言。
+    另外，作者专门录制了近16小时的多媒体语音教学视频帮助读者直观地学习。这些视频和书中的源代码一起收录于本
+    书的DVD光盘中。
+		《Java入门》是臧萌编著的一本图书。该书适合广大想学习一门编程语言的读者、没有任何基础的Java入门读者、Java自学人
+	员、从其他语言转向Java语言的读者、大中专院校的学生和社会培训学生。
+	本书是一本与众不同的Java入门好书。作者以独特的视角，向Java初学者讲述了如何才能真正理解和掌握Java语言。
+    另外，作者专门录制了近16小时的多媒体语音教学视频帮助读者直观地学习。这些视频和书中的源代码一起收录于本
+    书的DVD光盘中。
+		《Java入门》是臧萌编著的一本图书。该书适合广大想学习一门编程语言的读者、没有任何基础的Java入门读者、Java自学人
+	员、从其他语言转向Java语言的读者、大中专院校的学生和社会培训学生。
+	本书是一本与众不同的Java入门好书。作者以独特的视角，向Java初学者讲述了如何才能真正理解和掌握Java语言。
+    另外，作者专门录制了近16小时的多媒体语音教学视频帮助读者直观地学习。这些视频和书中的源代码一起收录于本
+    书的DVD光盘中。
+		《Java入门》是臧萌编著的一本图书。该书适合广大想学习一门编程语言的读者、没有任何基础的Java入门读者、Java自学人
+	员、从其他语言转向Java语言的读者、大中专院校的学生和社会培训学生。
+	
+    </p>
+    
+    
+    <div class="row " style="text-align: center">
+    	<div class="container">
+ <br />
+  <p>订购详情</p>            
+  <table class="table">
+    <thead>
+      <tr>
+      	<th>序号</th>
+        <th>商品内容</th>
+        <th>数量(件)</th>
+        <th>单价(元)</th>
+        <th>总价(元)</th>
+        <th>详情</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>JAVA书籍</td>
+        <td >2</td>
+        <td >20</td>
+        <td>40</td>
+        <td><button class="btn btn-success" type="button">详情</button></td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>微积分书籍</td>
+        <td >2</td>
+        <td >20</td>
+        <td>40</td>
+        <td><button class="btn btn-success" type="button">详情</button></td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>蓝月亮洗衣液</td>
+        <td >2</td>
+        <td >20</td>
+        <td>40</td>
+        <td><button class="btn btn-success" type="button">详情</button></td>
+      </tr>
+      <tr>
+        <td>总计</td>
+        <td></td>
+        <td ></td>
+        <td ></td>
+        <td>120</td>
+        <td></td>
+      </tr>
+     
+    </tbody>
+  </table>
+    <div >            
+  <ul class="pagination" style="margin-left: 300px;">
+    <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+    <li class="page-item"><a class="page-link" href="#">1</a></li>
+    <li class="page-item"><a class="page-link" href="#">2</a></li>
+    <li class="page-item"><a class="page-link" href="#">3</a></li>
+    <li class="page-item"><a class="page-link" href="#">Next</a></li>
+  </ul>
+  </div> 
+</div>
+
+    </div>
+   </div>
+    
+		<div id="footer">
+			<script>$("#footer").load("footer.html")</script>
+		</div>
+
+</div>
+	</body>
+</html>

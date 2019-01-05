@@ -21,6 +21,7 @@ public interface ActivityDao {
 	public List<Activity> searchActivityByDate(@Param("date") String date,@Param("c_no") String c_no);
 	public Activity findActivityByA_no(int a_no) ;
 	
+	public List<Activity> findActivityByC_no(String c_no) ;
 	/**
 	 * 向数据库添加一个活动记录
 	 * @param activity

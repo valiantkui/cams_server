@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>作业管理</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+   <link rel="icon" href="img/logo2.png" >
+   <link rel="stylesheet" type="text/css" href="css/1s_data.css">
+  <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/css/bootstrap.min.css">
+  <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://cdn.staticfile.org/popper.js/1.12.5/umd/popper.min.js"></script>
+  <script src="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/js/bootstrap.min.js"></script>
+		<style>
+		.position{
+			float:right;
+		}
+	</style>
+	<script>
+		var $current;
+		$(function(){
+			$current=$("#current");
+		});
+		function loadContent(t){
+			//alert(t.innerHTML)
+			var flag = t.innerText;
+			$current.parent().removeClass("active");
+			$current=$(t);
+			//alert($current.parent());
+			$current.parent().addClass("active");
+			
+
+		}
+	</script>
+	
+	
+	</head>
+	<body>
+	<div class="container">
+		
+		<div class="body_content" style="height: 1270px;">
+
+    <h2 class="h2_body">课后作业内容</h2><br><br>
+    
+    
+  
+    
+    <div class="row " style="text-align: center">
+    	<div class="container">
+ 
+  <p>查询结果：</p>            
+  <table class="table">
+    <thead>
+      <tr>
+        <th>当前学期作业列表</th>
+        <!--<th>操作</th>-->
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        
+       <td><a href="mulu5_message.html" style="font-size: 20px;">微积分第三次作业内容</a></td>
+        <!--<td>
+        	
+        	<button class="btn btn-danger" type="button">删除</button>
+        </td>-->
+      </tr>
+      <tr>
+        
+        <td><a href="#" style="font-size: 20px;">线性代数周一要交的作业内容</a></td>
+        <!--<td>
+        	
+        	<button class="btn btn-danger" type="button">删除</button>
+        </td>-->
+      </tr>
+      <tr>
+        
+        <td><a href="#" style="font-size: 20px;">大学英语听说听写	作业内容</a></td>
+        <!--<td>
+        	
+        	<button class="btn btn-danger" type="button">删除</button>
+        </td>-->
+      </tr>
+    </tbody>
+  </table>
+  
+    <div >            
+  <ul class="pagination" style="margin-left: 250px;">
+    <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+    <li class="page-item"><a class="page-link" href="#">1</a></li>
+    <li class="page-item"><a class="page-link" href="#">2</a></li>
+    <li class="page-item"><a class="page-link" href="#">3</a></li>
+    <li class="page-item"><a class="page-link" href="#">Next</a></li>
+  </ul>
+  </div> 
+  
+  <div class="row" >
+  	<div class="col-sm-12 col-md-7 offset-2" >
+  		<table class="table">
+    <thead>
+      <tr>
+        <th><button class="btn btn-default" type="button" onclick="$('#syllabus').load('syllabusPhoto1.html')">1</button></th>
+        <th><button class="btn btn-default" type="button" onclick="$('#syllabus').load('syllabusPhoto2.html')">2</button></th>
+        <th><button class="btn btn-default" type="button" onclick="$('#syllabus').load('syllabusPhoto3.html')">3</button></th>
+        <th><button class="btn btn-default" type="button" onclick="$('#syllabus').load('syllabusPhoto4.html')">4</button></th>
+        <th><button class="btn btn-default" type="button" onclick="$('#syllabus').load('syllabusPhoto5.html')">5</button></th>
+        <th><button class="btn btn-default" type="button" onclick="$('#syllabus').load('syllabusPhoto6.html')">6</button></th>
+        <th><button class="btn btn-default" type="button" onclick="$('#syllabus').load('syllabusPhoto7.html')">7</button></th>
+        <th><button class="btn btn-default" type="button" onclick="$('#syllabus').load('syllabusPhoto8.html')">8</button></th>
+        
+      </tr>
+    </thead>
+ 
+  </table>
+  	</div>
+  	
+  </div>
+  
+  <div class="divider">
+  <hr style="filter: progid:dximagetransform.microsoft.glow(color="#987cb9",strength=10) " width="100%" color="#987cb9" size=1>
+  	<hr style="filter: progid:dximagetransform.microsoft.glow(color="#987cb9",strength=10)" width="100%" color="#987cb9" size=1>
+  	</div>
+  <h2 class="h2_body" style="text-align: left;">作业发布页面</h2><br><br>
+  <div  style="margin: 0px 250px;">
+  	
+  <form style="width: 400px;">
+  <div class="form-group">
+    <label for="exampleInputEmail1">学科名称</label>
+    <input type="text" class="form-control" id="exampleInputEmail1" placeholder="学科名称">
+  </div>
+  <div class="form-group">
+    <label for="exampleInputPassword1">文本内容</label>
+    <textarea class="form-control" rows="3" placeholder="文本内容"></textarea>
+  </div>
+  <div class="form-group">
+    <label for="exampleInputPassword1">提交时间时间</label>
+    <input type="date" class="form-control" id="exampleInputPassword1" >
+  </div>
+  
+  <button type="submit" class="btn btn-success">Submit</button>
+</form>
+  </div>
+</div>
+
+    </div>
+   </div>
+   
+	
+</div>
+	</body>
+</html>

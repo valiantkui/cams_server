@@ -1,0 +1,63 @@
+<script src="../js/checkClassSession.js"></script>
+		<meta charset="UTF-8">
+			<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="1s_data.html"><h4>班级管理</h4></a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav">
+      <li class="nav-item active" id="current">
+        <a class="nav-link" href="1s_data.html">学生资料管理</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="2syllabus.html">课程表管理</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="3activity.html">活动管理</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link " href="4purchase.html">团购管理</a>
+        </li>
+      <li class="nav-item">
+        <a class="nav-link " href="5c_data.html" >班级资料管理</a>
+        </li>
+      <li class="nav-item ">
+        <a class="nav-link " href="6c_courseware.html">班级课件管理</a>
+      </li>
+      <li class="nav-item ">
+        <a class="nav-link " href="7task.html">作业管理</a>
+      </li>
+    </ul>
+  </div>
+  <div class="position" >
+    <span id="classInfo"></span>
+  	<button type="button" class="btn btn-default btn-md"  id="sign_out" onclick="SignOut()">退出登陆</button>
+  </div>
+  <!--登录 按钮-->
+  
+ 
+	</nav>
+<script>
+  function SignOut(){
+    $.ajax({
+      url: domain+"/login/classLogout",
+      type: "get",
+      dataType: "text",
+      success: function (result) {
+        if(result == "true"){
+          window.location="SignInUp.html";
+        }else{
+          alert("退出失败");
+        }
+      },
+      error: function(e){
+        alert("网络异常");
+      }
+
+
+
+    })
+  }
+
+</script>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>班级管理-学生资料管理</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+   <link rel="icon" href="../img/logo2.png" >
+   <link rel="stylesheet" type="text/css" href="../css/1s_data.css">
+  <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/css/bootstrap.min.css">
+  <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://cdn.staticfile.org/popper.js/1.12.5/umd/popper.min.js"></script>
+  <script src="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/js/bootstrap.min.js"></script>
+		<style>
+		.position{
+			float:right;
+		}
+	</style>
+	<script>
+		var $current;
+		$(function(){
+			$current=$("#current");
+		});
+		function loadContent(t){
+			//alert(t.innerHTML)
+			var flag = t.innerText;
+			$current.parent().removeClass("active");
+			$current=$(t);
+			//alert($current.parent());
+			$current.parent().addClass("active");
+			
+//			if(flag == "首页"){
+//				$("#img1")[0].src="img/introduction1.PNG";
+//				$("#img2")[0].src="img/introduction2.PNG";
+//				$("#img3")[0].src="img/introduction3.PNG";
+////				window.location="1Home.html"
+//			}else if(flag == "学习园地"){
+//				$("#img1")[0].src="img/study1.PNG";
+//				$("#img2")[0].src="img/study2.PNG";
+//				$("#img3")[0].src="img/study3.PNG";
+////				window.location="2Learning.html"
+//			}else if(flag == "团体活动"){
+//				$("#img1")[0].src="img/music3.PNG";
+//				$("#img2")[0].src="img/photos1.PNG";
+//				$("#img3")[0].src="img/photos2.PNG";
+////				window.location="3Group.html"
+//			}else if(flag == "书籍订阅"){
+//				$("#img1")[0].src="img/book1.PNG";
+//				$("#img2")[0].src="img/book2.PNG";
+//				$("#img3")[0].src="img/book3.PNG";
+////				window.location="4Book.html"
+//			}else if(flag == "党建中心"){
+//				$("#img1")[0].src="img/sy1.png";
+//				$("#img2")[0].src="img/sy2.png";
+//				$("#img3")[0].src="img/sy3.png";
+////				window.location="5Party.html"
+//			}else if(flag == "后台管理"){
+//				$("#img1")[0].src="img/manage1.PNG";
+//				$("#img2")[0].src="img/manage2.PNG";
+//				$("#img3")[0].src="img/manage3.PNG";
+////				window.location="6Manage.html"
+//			}
+		}
+	</script>
+	
+	<script>
+		function createInput(){
+			
+			var last_input = $("#input_container>input:last").val();
+			//alert(current_input)
+			if(last_input != "" ){
+				//alert("生成");
+				//var create_input = document.createElement("<input type='text' onblur='createInput(this)' /> ");
+								var create_input = document.createElement("input");//创造一个标签
+//								create_input.type="password";
+//								create_input.onblur=createInput;//绑定onblur事件   onblur为属性(光标失去事件)  createInput为属性值，触发函数指向createInput()
+				$("#input_container").append(create_input);
+				$("#input_container").append("<br/>")
+				
+			}
+		}
+		
+		function addInput(){
+			createInput();
+		}
+	</script>
+	</head>
+	<body>
+		
+		<div id="input_container">
+			<input type="password" /><button onclick="addInput()">添加</button><br />
+			
+		</div>
+		<!--<div class="container" style="width:200px">
+		 <form>
+    <div class="form-group">
+    	<input type="time"/>
+      <label for="sel1">单选下拉菜单:</label>
+      <select class="form-control" id="sel1">
+        <option>1</option>
+        <option>2</option>
+        <option>3</option>
+        <option>4</option>
+        <option>5</option>
+        <option>6</option>
+        <option>7</option>
+        <option>8</option>
+      </select>
+      </div>
+      </form>
+     </div>-->
+	</body>
+</html>

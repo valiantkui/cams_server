@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>学生资料管理</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+   <link rel="icon" href="../img/logo2.png" >
+   
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/popper.js/1.12.5/umd/popper.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/js/bootstrap.min.js"></script>
+     	<script type="text/javascript" src="../js/global_varable.js"></script>
+
+<style>
+.unfoces{
+            height: 100%;
+            overflow: hidden;
+        }
+</style>
+
+	<script>
+        $.ajaxSetup({
+            xhrFields: {
+                //允许带上凭据
+                withCredentials: true
+            },
+            crossDomain: true,
+        });
+
+
+
+    
+		$(function(){
+		
+
+            findCurrentClassStudent();
+
+
+		});
+	
+
+		var s_id_ok = false;
+		function checkS_id() {
+
+            var s_id = $("#s_id").val();
+           // alert(s_id);
+            if(s_id.trim()=="")  return false;
+
+            $.ajax({
+                url: domain+"/class/checkS_id?s_id="+s_id,
+                type: "get",
+                dataType: "text",
+                success: function (result) {
+                    if(result == "true"){
+                        $("#s_id_message").text("学号可以使用");
+                        $("#s_id_message").css({color:"green"});
+                        s_id_ok=true;
+
+                    }else{
+                        $("#s_id_message").text("学号已存在");
+                        $("#s_id_message").css({color:"red"});
+                    }
+                },
+                error: function (e) {
+                    alert("错误");
+                }
+
+            })
+        }
+
+		function addStudent(){
+		    //alert("test")
+		    var s_id = $("#s_id").val();
+		    var name = $("#name").val();
+		    var post = $("#post").val();
+
+		    if(s_id=="" || name=="" || post==""){
+
+		        $("#add_student_message").text("请输入完整");
+		        $("#add_student_message").css({"color":"red"});
+
+		        return false;
+            }
+
+		    if(!s_id_ok){
+                $("#add_student_message").text("学号不能使用");
+                $("#add_student_message").css({"color":"red"});
+
+                return false;
+            }
+
+
+            //var formdata = new FormData(document.getElementById("add_sudent_form"));
+            $.ajax({
+                url: domain+"/class/addStudent",
+                type: "post",
+                data: {"s_id":s_id,"name":name,"post":post},
+                dataType: "text",
+                success: function (result) {
+                    if(result == "true"){
+                        alert("添加成功");
+                        findCurrentClassStudent();
+
+                    }else{
+                        $("#add_student_message").text("添加失败，请重新尝试...");
+                        $("#add_student_message").css({"color":"red"});
+                    }
+                },
+                error: function (e) {
+                    alert("网络错误");
+                }
+
+            });
+        }
+
+
+        function findCurrentClassStudent(){
+            $.ajax({
+               url: domain+"/class/findCurrentClassStudent",
+               type: "get",
+               dataType: "text",
+               success: function (result) {
+                    //alert(result);
+                   generateStudent($.parseJSON(result));
+               },
+                error: function (e) {
+                    alert("错误");
+                }
+
+            });
+        }
+        function generateStudent(studentList){
+            $("#student_panel").empty();
+            for(var i = 0;i<studentList.length;i++){
+                var student = studentList[i];
+
+                var tr = document.createElement("tr");
+                var td1 = document.createElement("td");
+                var td2 = document.createElement("td");
+                var td3 = document.createElement("td");
+                var td4 = document.createElement("td");
+                $(td1).html("<span>"+student.s_id+"</span>");
+                $(td2).html("<span>"+student.name+"</span>");
+                $(td3).text(student.post);
+                var a1 = document.createElement("a");
+                $(a1).text("修改");
+             	a1.href="###";
+                $(a1).click({s_id:student.s_id,name:student.name,post:student.post},updateStudent);
+                $(td4).append(a1);
+                $(td4).append("<a onclick='deleteStudent("+student.s_id+")' href='###'>删除</a>");
+                $(tr).append(td1,td2,td3,td4);
+                $("#student_panel").append(tr);
+            }
+        }
+
+        function deleteStudent(s_id){
+		    //alert(s_id);
+		    $.ajax({
+                url: domain+"/class/deleteStudentByS_id?s_id="+s_id,
+                type: "get",
+                dataType: "text",
+                success: function (result) {
+                    if(result == "true"){
+                        findCurrentClassStudent();
+                    }else if(result =="s_id_false"){
+                        alert("您要删除的学生账号不存在");
+                    }else{
+                        alert("错误");
+                    }
+
+                },
+                error: function (e){
+                    alert("错误！！");
+                }
+            })
+
+        }
+        function removeFouces(){
+      	  $("html").removeClass("unfoces");
+            $("body").removeClass("unfoces");
+      }
+
+        function updateStudent(e){
+		    //alert(e.data.s_id);
+		      var maxw = document.documentElement.clientWidth;
+            var maxh = document.documentElement.clientHeight;
+           // var maxh = maxh*0.9;
+            //alert(maxw+",,"+maxh);
+            $("#update_student_panel").css({"position":"fixed",width:maxw+"px",height:maxh+"px","top":"0px","left":"0px","overflow":"auto"});
+
+           $("#update_student_panel").show();
+           $("html").addClass("unfoces");
+           $("body").addClass("unfoces");
+           $("#s_id2").val(e.data.s_id);
+           $("#name2").val(e.data.name);
+           $("#post2").val(e.data.post);
+
+
+
+        }
+
+        function doUpdateStudent(){
+            var s_id = $("#s_id2").val();
+            var name = $("#name2").val();
+            var post = $("#post2").val();
+
+
+            if(s_id=="" || name=="" || post==""){
+
+                $("#update_student_message").text("请输入完整");
+                $("#update_student_message").css({"color":"red"});
+
+                return false;
+            }
+            $("#update_student_message").text("正在修改...");
+            $("#update_student_message").css({"color":"green"});
+            var student = new Object();
+            student.s_id= s_id;
+            student.name=name;
+            student.post=post;
+            $.ajax({
+
+                url: domain+"/class/updateStudentByClass",
+                type: "post",
+                data: {"stuJson":JSON.stringify(student)},
+                success: function (result) {
+                    alert(result);
+                    if(result =="true"){
+                        $("#update_student_panel").hide(500);
+                        findCurrentClassStudent();
+                    }
+                },
+                error: function (e) {
+                    alert("错误");
+                }
+            });
+
+        }
+
+	</script>
+	
+	
+	</head>
+	<body>
+		<!--导航栏-->
+			<div id="header">
+				<script>
+					$("#header").load("header.html");
+				</script>
+                <script src="../js/checkClassSession.js"></script>
+			</div>
+            <div class="container-fluid">
+		
+                <h2>学生资料管理</h2><br><br>
+
+
+                    <div class="row ">
+                        <div class="col-12 col-md-4" >
+
+                            <form id="add_student_form">
+                                  <div class="form-group">
+                                    <label for="exampleInputEmail1">学号</label><span id="s_id_message"></span>
+                                    <input type="text" name="s_id" id="s_id" class="form-control" onblur="checkS_id()"  placeholder="s_id">
+                                  </div>
+                                  <div class="form-group">
+                                    <label for="exampleInputPassword1">姓名</label>
+                                    <input type="text" name="name" id="name" class="form-control"  placeholder="name">
+                                  </div>
+                                  <div class="form-group">
+                                    <label for="exampleInputPassword1">职位</label>
+                                    <input type="text" name="post" id="post" class="form-control"  placeholder="post">
+                                  </div>
+
+                                  <button type="button" onclick="addStudent()" class="btn btn-success">添加</button>
+                                    <span id="add_student_message">
+
+                                    </span>
+                            </form>
+                        </div>
+
+
+
+                            <div class="col-12 col-md-8" style="text-align: center">
+
+
+                                 
+                                  <table class="table" padding="0px" style="width: 100%">
+                                    <thead>
+                                      <tr>
+                                        <th>学号</th>
+                                        <th>姓名</th>
+                                        <th>职位</th>
+                                        <th>操作</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody id="student_panel">
+                                    <!--
+                                      <tr>
+                                        <td>20152470426</td>
+                                        <td>Doe</td>
+                                        <td>班委</td>
+                                        <td>
+                                            <button class="btn btn-success" type="button">修改</button>
+                                            <button class="btn btn-danger" type="button">删除</button>
+                                        </td>
+                                      </tr>-->
+                                    </tbody>
+                                  </table>
+                                    <div class="col-12">
+
+                                          <ul class="pagination" >
+                                            <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+
+
+                                            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                                          </ul>
+                                    </div>
+                          </div>
+
+                    </div>
+
+                <div id="update_student_panel" class="bg-white" style="position: fixed; top: 20%;left: 0px;display: none; padding: 2rem;">
+
+                    <form id="update_student_form">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">学号</label>
+                            <input type="text" name="s_id" id="s_id2" class="form-control" readonly  placeholder="s_id">
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">姓名</label>
+                            <input type="text" name="name" id="name2" class="form-control"  placeholder="name">
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">职位</label>
+                            <input type="text" name="post" id="post2" class="form-control"  placeholder="post">
+                        </div>
+
+                        <button type="button" onclick="doUpdateStudent()" class="btn btn-success">修改</button>
+                        <button type="button" onclick="$('#update_student_panel').fadeOut(500);removeFouces()" class="btn btn-success">取消</button>
+                        <span id="update_student_message">
+
+                                    </span>
+                    </form>
+                </div>
+
+        </div>
+
+
+
+        <div id="footer">
+            <script>$("#footer").load("footer.html")</script>
+        </div>
+
+
+	</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>爱心班级-首页</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+   <link rel="icon" href="img/logo2.png" >
+   <link rel="stylesheet" type="text/css" href="css/classIntroduction.css">
+  <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/css/bootstrap.min.css">
+  <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://cdn.staticfile.org/popper.js/1.12.5/umd/popper.min.js"></script>
+  <script src="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/js/bootstrap.min.js"></script>
+  	<style>
+		.position{
+			float:right;
+		}
+	</style>
+	<script>
+		var $current;
+		$(function(){
+			$current=$("#current");
+		});
+		function loadContent(t){
+			//alert(t.innerHTML)
+			var flag = t.innerText;
+			$current.parent().removeClass("active");
+			$current=$(t);
+			//alert($current.parent());
+			$current.parent().addClass("active");
+			
+			if(flag == "首页"){
+				$("#img1")[0].src="img/introduction1.PNG";
+				$("#img2")[0].src="img/introduction2.PNG";
+				$("#img3")[0].src="img/introduction3.PNG";
+			}else if(flag == "学习园地"){
+				$("#img1")[0].src="img/study1.PNG";
+				$("#img2")[0].src="img/study2.PNG";
+				$("#img3")[0].src="img/study3.PNG";
+			}else if(flag == "团体活动"){
+				$("#img1")[0].src="img/music3.PNG";
+				$("#img2")[0].src="img/photos1.PNG";
+				$("#img3")[0].src="img/photos2.PNG";
+			}else if(flag == "书籍订阅"){
+				$("#img1")[0].src="img/book1.PNG";
+				$("#img2")[0].src="img/book2.PNG";
+				$("#img3")[0].src="img/book3.PNG";
+			}else if(flag == "党建中心"){
+				$("#img1")[0].src="img/sy1.png";
+				$("#img2")[0].src="img/sy2.png";
+				$("#img3")[0].src="img/sy3.png";
+			}else if(flag == "后台管理"){
+				$("#img1")[0].src="img/manage1.PNG";
+				$("#img2")[0].src="img/manage2.PNG";
+				$("#img3")[0].src="img/manage3.PNG";
+			}
+		}
+	</script>
+</head>
+	<body>
+		<!--导航栏-->
+		<div id="header">
+			<script>$("#header").load("header.html")</script>
+		</div>
+			
+<!--文本内容-->
+		<div class="body_content">
+
+    <h2 class="h2_body">班级起源</h2><br><br>
+    <p>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;郑州大学信息工程学院计算机科学与技术4班，成立于2015年9月，来自于全省的优秀
+      高考学子经过三年的努力齐聚郑大。从军训时，个个都是晒得黑白不匀称，到辩论比赛的斗志昂扬。从迎来第一场冬天的白雪皑皑到圣诞晚会，
+      大家欢乐共度。每个同学都非常团结，大家互帮互助。在学习上，同学们互相交流，互相分享经验，帮助班级整体保持很好地学习氛围。在课下，
+      愉快的篮球赛、诗歌大赛、朗诵比赛、长跑比赛等激发着每一个郑大学子的生机与活力。
+      <br><br></p>
+    <ol class="ol_li">
+      <li><a href="#">郑州大学信息工程学院计科4班成立大会</a></li>
+      <li><a href="#">班级班干部选拔投票最终名单公布</a></li>
+      <li><a href="#">“班级记忆”墙正式投入使用，记录班级变化</a></li>
+      <li><a href="#">班级成员的组成以及班级成员的基本信息</a></li>
+      <li><a href="#">班级成立的各项大事汇总表</a></li>
+
+    </ol>
+
+  </div>
+<!--底部内容-->
+<div id="footer">
+	<script>
+		$("#footer").load("footer.html");
+	</script>
+</div>
+		
+
+		
+	</body>
+</html>

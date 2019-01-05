@@ -219,6 +219,18 @@ public class ActivityController {
 		return activityDao.findActivityByDayC_no(c_no, day);
 	}
 	
+	@RequestMapping("/findAllClassActivity")
+	public List<Activity> findAllClassActivity(HttpSession session){
+		String c_no = (String) session.getAttribute("c_no");
+		String s_id = (String) session.getAttribute("s_id");
+		
+		
+		if(c_no == null && s_id != null) {
+			c_no = studentDao.findStudentByS_id(s_id).getC_no();
+		}
+		return activityDao.findActivityByC_no(c_no);
+	}
+	
 	/**
 	 * 已测试
 	 * @param title
